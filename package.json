@@ -1,7 +1,7 @@
 {
   "name": "sasehack",
   "version": "1.0.0",
-  "main": "expo/AppEntry.js",
+  "main": "expo-router/entry",
   "scripts": {
     "start": "expo start",
     "android": "expo start --android",
@@ -9,6 +9,9 @@
     "web": "expo start --web"
   },
   "dependencies": {
+    "@react-native-async-storage/async-storage": "1.23.1",
+    "@rneui/themed": "^4.0.0-rc.8",
+    "@supabase/supabase-js": "^2.45.4",
     "expo": "~51.0.28",
     "expo-location": "^17.0.1",
     "expo-status-bar": "~1.12.1",
@@ -16,6 +19,18 @@
     "react": "18.2.0",
     "react-native": "0.74.5",
     "react-native-maps": "^1.18.0"
+    "expo-dev-client": "^4.0.27",
+    "expo-router": "^3.5.23",
+    "expo-status-bar": "~1.12.1",
+    "immer": "^10.1.1",
+    "nativewind": "^4.0.1",
+    "react": "18.2.0",
+    "react-native": "0.74.5",
+    "react-native-error-boundary": "^1.2.4",
+    "react-native-mmkv": "2.12.2",
+    "react-native-reanimated": "~3.10.1",
+    "react-native-url-polyfill": "^2.0.0",
+    "zustand": "^5.0.0-rc.2"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
