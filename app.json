@@ -1,6 +1,7 @@
 {
   "expo": {
     "name": "sasehack",
+    "scheme": "sasehack",
     "slug": "sasehack",
     "version": "1.0.0",
     "orientation": "portrait",
