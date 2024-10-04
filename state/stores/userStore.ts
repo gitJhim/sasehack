@@ -8,6 +8,9 @@ export const useUserStore = create<UserStore>(
   persist(
     immer((set) => ({
       user: null,
+      session: null,
+
+      setSession: (session: null) => set({ session }),
       setUser: (user: null) => set({ user }),
     })),
     {

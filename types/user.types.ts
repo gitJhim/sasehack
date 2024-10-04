@@ -1,6 +1,11 @@
+import { Session } from "@supabase/supabase-js";
+
 export type UserStore = {
   user: User | null;
   setUser: (user: User) => void;
+
+  session: Session | null;
+  setSession: (session: Session) => void;
 };
 
 export type User = {

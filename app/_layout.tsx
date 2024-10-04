@@ -3,6 +3,7 @@ import { supabase } from "../utils/supabase";
 import { useEffect } from "react";
 import ErrorBoundary from "react-native-error-boundary";
 import { Stack } from "expo-router";
+import { useUserStore } from "../state/stores/userStore";
 
 AppState.addEventListener("change", (state) => {
   if (state === "active") {
@@ -13,10 +14,16 @@ AppState.addEventListener("change", (state) => {
 });
 
 export default function AppLayout() {
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {});
+  const setSession = useUserStore((state) => state.setSession);
 
-    supabase.auth.onAuthStateChange((_event, session) => {});
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+    });
+
+    supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
   }, []);
 
   return (
