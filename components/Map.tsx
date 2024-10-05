@@ -12,14 +12,12 @@ import * as Location from "expo-location";
 import Modal from "react-native-modal";
 import { useMapStore } from "../state/stores/mapStore";
 import { useUserStore } from "../state/stores/userStore";
-import SigninModal from "./SignInModal";
 import SignInModal from "./SignInModal";
 import { addNewMarker, getMarkers } from "../utils/db/map";
 
 export default function Map() {
   const markers = useMapStore((state) => state.markers);
   const setMarkers = useMapStore((state) => state.setMarkers);
-  const addMarker = useMapStore((state) => state.addMarker);
   const user = useUserStore((state) => state.user);
 
   const initialLocation = {
