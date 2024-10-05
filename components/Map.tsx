@@ -129,10 +129,10 @@ export default function Map() {
         />
         {renderMarkers()}
       </MapView>
-      <TouchableOpacity onPress={goToCurrentLocation} className="bg-gray-300 rounded-3xl p-4 absolute bottom-[13%] right-5">
+      <TouchableOpacity onPress={goToCurrentLocation} className="bg-gray-300 rounded-3xl p-4 absolute bottom-[23%] right-5">
           <Image source={require('../assets/self.png')} style={{ width: 40, height: 40 }} />
       </TouchableOpacity>
-      <TouchableOpacity onPress={() => setModalVisible(true)} className="bg-[#17A773] p-4 rounded-3xl absolute bottom-5 right-5">
+      <TouchableOpacity onPress={() => setModalVisible(true)} className="bg-[#17A773] p-4 rounded-3xl absolute bottom-[18%] right-5">
           <Image source={require('../assets/add_2.png')} style={{ width: 40, height: 40 }} />
       </TouchableOpacity>
     </View>
