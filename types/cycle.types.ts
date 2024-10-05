@@ -8,10 +8,12 @@ export type Cycle = {
 
 export type CycleItem = {
   id: string | null;
-  name: string;
-  description: string;
-  createdAt: string | null;
+  cycleId: string | null;
+  type: CycleItemType;
+  quantity: number;
 };
+
+export type CycleItemType = "Bottle" | "Bag" | "Can";
 
 export type CycleStore = {
   cycles: Cycle[];
