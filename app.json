@@ -20,7 +20,12 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.jhimmy.sasehack"
+      "package": "com.jhimmy.sasehack",
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyCofnaduYh7txdrqbEhz1PgXFeA4p85W08"
+        }
+      }
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -32,10 +37,12 @@
     },
     "plugins": [
       "expo-router",
-      "@react-native-google-signin/google-signin",
-      {
-        "iosUrlScheme": "156165157980-on0sckphkk7t3n0ttl9invjlrp8jpn0n.apps.googleusercontent.com"
-      }
+      [
+        "@react-native-google-signin/google-signin",
+        {
+          "iosUrlScheme": "com.googleusercontent.apps.156165157980-mr98u2molp7k41g51rsanfncuja8no5l"
+        }
+      ]
     ]
   }
 }
