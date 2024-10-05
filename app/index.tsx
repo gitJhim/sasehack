@@ -5,8 +5,10 @@ import Map from "../components/Map";
 const Index = () => {
   return (
     <View>
-      <TopBar userLevel={100} userProfile={require("../assets/dummyProfile.png")}></TopBar>
-      <Text className="text-blue-500">Hello World!</Text>
+      <TopBar
+        userLevel={69}
+        userProfile={require("../assets/dummyProfile.png")}
+      />
       <Map />
     </View>
   );
