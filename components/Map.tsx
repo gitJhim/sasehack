@@ -18,7 +18,6 @@ import { addNewMarker, getMarkers } from "../utils/db/map";
 export default function Map() {
   const markers = useMapStore((state) => state.markers);
   const setMarkers = useMapStore((state) => state.setMarkers);
-  const addMarker = useMapStore((state) => state.addMarker);
   const user = useUserStore((state) => state.user);
 
 

@@ -18,6 +18,8 @@ import {
 GoogleSignin.configure({
   webClientId:
     "156165157980-vq7nev50rl4agci83fksoj77pt4ufj1v.apps.googleusercontent.com",
+  iosClientId:
+    "156165157980-mr98u2molp7k41g51rsanfncuja8no5l.apps.googleusercontent.com",
 });
 
 export default function SignInPage() {
