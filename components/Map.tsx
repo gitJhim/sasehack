@@ -118,13 +118,14 @@ export default function Map() {
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => setModalVisible(false)}
-              className="bg-red-500 py-2 px-4 rounded-lg"
+              className="bg-[#17A773] py-2 px-4 rounded-full"
             >
-              <Text className="text-white font-semibold">Cancel</Text>
+              <Text className="text-white font-semibold">Add Cycle</Text>
             </TouchableOpacity>
           </View>
         </View>
       </Modal>
+      <AddBinModal  isVisible={modalVisible} />
       <MapView
         style={styles.map}
         region={region}
@@ -135,15 +136,12 @@ export default function Map() {
         <Marker coordinate={myLocation} title="My Location" />
         {renderMarkers()}
       </MapView>
-      <View className="absolute bottom-20">
-        <View className="flex flex-row justify-center items-center">
-          <Button
-            title="Go to current location"
-            onPress={goToCurrentLocation}
-          />
-          <Button title="Add Marker" onPress={() => setModalVisible(true)} />
-        </View>
-      </View>
+      <TouchableOpacity onPress={goToCurrentLocation} className="bg-gray-300 rounded-3xl p-4 absolute bottom-[13%] right-5">
+          <Image source={require('../assets/self.png')} style={{ width: 40, height: 40 }} />
+      </TouchableOpacity>
+      <TouchableOpacity onPress={() => setModalVisible(true)} className="bg-[#17A773] p-4 rounded-3xl absolute bottom-5 right-5">
+          <Image source={require('../assets/add_2.png')} style={{ width: 40, height: 40 }} />
+      </TouchableOpacity>
     </View>
   );
 }
