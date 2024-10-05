@@ -28,3 +28,29 @@ export const signInUserWithToken = async (token: string) => {
 
   return { data, error };
 };
+
+export const doesUserExistById = async (userId: string) => {
+  const { data: users, error } = await supabase
+    .from("users")
+    .select("*")
+    .eq("id", userId);
+
+  const user = users?.length ? users[0] : null;
+
+  return { user, error };
+};
+
+export const updateUser = async (session: Session) => {
+  const { data, error } = await supabase
+    .from("users")
+    .update({
+      email: session.user.email,
+      name: session.user.user_metadata.full_name,
+      avatar_url: session.user.user_metadata.avatar_url,
+      last_sign_in: session.user.last_sign_in_at,
+    })
+    .eq("id", session.user.id)
+    .select("*");
+
+  return { user: data, error };
+};

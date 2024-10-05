@@ -1,11 +1,14 @@
-import React from "react";
 import { View, Text } from "react-native";
+import TopBar from "../components/TopBar";
 import Map from "../components/Map";
 
 const Index = () => {
   return (
     <View>
-      <Text className="text-blue-500">Hello World</Text>
+      <TopBar
+        userLevel={69}
+        userProfile={require("../assets/dummyProfile.png")}
+      />
       <Map />
     </View>
   );
