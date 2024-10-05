@@ -19,10 +19,23 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.jhimmy.sasehack"
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "8f2c42c1-882d-4b95-ac9b-04129828a5fc"
+      }
+    },
+    "plugins": [
+      "expo-router",
+      "@react-native-google-signin/google-signin",
+      {
+        "iosUrlScheme": "156165157980-on0sckphkk7t3n0ttl9invjlrp8jpn0n.apps.googleusercontent.com"
+      }
+    ]
   }
 }
