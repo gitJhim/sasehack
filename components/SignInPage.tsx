@@ -33,6 +33,7 @@ export default function SignInPage() {
     let checkUser: any;
     console.log("Checking and updating user...");
     try {
+      console.log(session.user.id);
       const { user, error } = await doesUserExistById(session.user.id);
 
       if (error) {

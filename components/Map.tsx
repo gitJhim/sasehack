@@ -2,20 +2,23 @@ import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import { useState, useEffect, useRef } from "react";
 import {
   View,
-  Button,
   StyleSheet,
   Dimensions,
-  Pressable,
   Text,
   TouchableOpacity,
+  Image,
 } from "react-native";
 import * as Location from "expo-location";
 import Modal from "react-native-modal";
 import { useMapStore } from "../state/stores/mapStore";
 import { useUserStore } from "../state/stores/userStore";
+import SigninModal from "./SignInModal";
+import SignInModal from "./SignInModal";
+import { addNewMarker, getMarkers } from "../utils/db/map";
 
 export default function Map() {
   const markers = useMapStore((state) => state.markers);
+  const setMarkers = useMapStore((state) => state.setMarkers);
   const addMarker = useMapStore((state) => state.addMarker);
   const user = useUserStore((state) => state.user);
 
@@ -32,6 +35,7 @@ export default function Map() {
   });
   const mapRef = useRef<MapView>(null);
   const [modalVisible, setModalVisible] = useState(false);
+  const [signInModalVisible, setSignInModalVisible] = useState(false);
 
   const getCurrentLocation = async () => {
     let { status } = await Location.requestForegroundPermissionsAsync();
@@ -45,6 +49,16 @@ export default function Map() {
   };
 
   useEffect(() => {
+    const loadMarkers = async () => {
+      const { data: markers, error } = await getMarkers();
+      if (error) {
+        console.error("Error loading markers:", error.message);
+      } else {
+        setMarkers(markers);
+      }
+    };
+
+    loadMarkers();
     getCurrentLocation();
   }, []);
 
@@ -60,33 +74,31 @@ export default function Map() {
     }
   };
 
-  const onAddMarker = () => {
+  const onAddMarker = async () => {
     if (!user) {
+      setSignInModalVisible(true);
       return;
     }
 
-    const newMarker = {
+    let newMarker = {
       id: null,
       userId: user.id,
-      coordinate: {
-        latitude: myLocation.latitude,
-        longitude: myLocation.longitude,
-      },
+      latitude: myLocation.latitude,
+      longitude: myLocation.longitude,
     };
 
-    addMarker(newMarker);
-    setModalVisible(false);
+    await addNewMarker(newMarker);
   };
 
   const renderMarkers = () => {
     return markers.map((marker) => {
-      return marker.coordinate.latitude === myLocation.latitude &&
-        marker.coordinate.longitude === myLocation.longitude ? (
+      return marker.latitude === myLocation.latitude &&
+        marker.longitude === myLocation.longitude ? (
         <Marker
           key={marker.id}
           coordinate={{
-            latitude: marker.coordinate.latitude,
-            longitude: marker.coordinate.longitude + 0.0002,
+            latitude: marker.latitude,
+            longitude: marker.longitude + 0.0002,
           }}
           title={`Bin ${marker.id}`}
           image={require("../assets/marker.png")}
@@ -94,7 +106,11 @@ export default function Map() {
       ) : (
         <Marker
           key={marker.id}
-          coordinate={marker.coordinate}
+          // get the marker's coordinate from the marker object
+          coordinate={{
+            latitude: marker.latitude,
+            longitude: marker.longitude,
+          }}
           title={`Bin ${marker.id}`}
           image={require("../assets/marker.png")}
         />
@@ -104,6 +120,10 @@ export default function Map() {
 
   return (
     <View className="flex flex-col justify-center items-center">
+      <SignInModal
+        isVisible={signInModalVisible}
+        setModalVisible={setSignInModalVisible}
+      />
       <Modal
         isVisible={modalVisible}
         onBackdropPress={() => setModalVisible(false)}
@@ -125,7 +145,6 @@ export default function Map() {
           </View>
         </View>
       </Modal>
-      <AddBinModal  isVisible={modalVisible} />
       <MapView
         style={styles.map}
         region={region}
@@ -136,11 +155,23 @@ export default function Map() {
         <Marker coordinate={myLocation} title="My Location" />
         {renderMarkers()}
       </MapView>
-      <TouchableOpacity onPress={goToCurrentLocation} className="bg-gray-300 rounded-3xl p-4 absolute bottom-[13%] right-5">
-          <Image source={require('../assets/self.png')} style={{ width: 40, height: 40 }} />
+      <TouchableOpacity
+        onPress={goToCurrentLocation}
+        className="bg-gray-300 rounded-3xl p-4 absolute bottom-[13%] right-5"
+      >
+        <Image
+          source={require("../assets/self.png")}
+          style={{ width: 40, height: 40 }}
+        />
       </TouchableOpacity>
-      <TouchableOpacity onPress={() => setModalVisible(true)} className="bg-[#17A773] p-4 rounded-3xl absolute bottom-5 right-5">
-          <Image source={require('../assets/add_2.png')} style={{ width: 40, height: 40 }} />
+      <TouchableOpacity
+        onPress={() => setModalVisible(true)}
+        className="bg-[#17A773] p-4 rounded-3xl absolute bottom-5 right-5"
+      >
+        <Image
+          source={require("../assets/add_2.png")}
+          style={{ width: 40, height: 40 }}
+        />
       </TouchableOpacity>
     </View>
   );
@@ -158,4 +189,3 @@ const styles = StyleSheet.create({
     height: Dimensions.get("window").height,
   },
 });
-
