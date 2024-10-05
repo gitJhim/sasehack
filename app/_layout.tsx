@@ -6,7 +6,6 @@ import { AppState } from "react-native";
 import { supabase } from "../utils/supabase";
 import { useUserStore } from "../state/stores/userStore";
 import ErrorBoundary from "react-native-error-boundary";
-import React from "react";
 
 AppState.addEventListener("change", (state) => {
   if (state === "active") {
