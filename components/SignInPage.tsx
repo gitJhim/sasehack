@@ -116,7 +116,7 @@ export default function SignInPage() {
 
   return (
     <>
-      <View className="flex-1 items-center justify-center bg-lightBackground dark:bg-darkBackground p-4">
+      <View className="flex-1 items-center justify-center bg-lightBackground dark:bg-darkBackground p-7">
         <TouchableOpacity
           onPress={async () => {
             try {
@@ -156,7 +156,7 @@ export default function SignInPage() {
               }
             }
           }}
-          className="w-4/5 h-12 mb-4 flex-row items-center justify-center bg-[#4285F4] rounded-lg"
+          className="h-12 mb-4 flex-row items-center justify-center bg-[#4285F4] rounded-2xl w-ful px-2"
         >
           <Ionicons name="logo-google" size={24} color="white" />
           <Text className="text-white text-lg ml-2">Sign in with Google</Text>

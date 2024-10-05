@@ -14,6 +14,7 @@ import { useMapStore } from "../state/stores/mapStore";
 import { useUserStore } from "../state/stores/userStore";
 import SignInModal from "./SignInModal";
 import { addNewMarker, getMarkers } from "../utils/db/map";
+import AddCycleModal from "./AddCycleModal";
 
 export default function Map() {
   const markers = useMapStore((state) => state.markers);
@@ -34,6 +35,7 @@ export default function Map() {
   const mapRef = useRef<MapView>(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [signInModalVisible, setSignInModalVisible] = useState(false);
+  const [recycleModalVisible, setRecycleModalVisible] = useState(false);
 
   const getCurrentLocation = async () => {
     let { status } = await Location.requestForegroundPermissionsAsync();
@@ -88,6 +90,14 @@ export default function Map() {
     await addNewMarker(newMarker);
   };
 
+  const onAddRecycle = async () => {
+    if (!user) {
+      setSignInModalVisible(true);
+      return;
+    }
+    setRecycleModalVisible(true);
+  };
+
   const renderMarkers = () => {
     return markers.map((marker) => {
       return marker.latitude === myLocation.latitude &&
@@ -122,23 +132,27 @@ export default function Map() {
         isVisible={signInModalVisible}
         setModalVisible={setSignInModalVisible}
       />
+      <AddCycleModal
+        isVisible={recycleModalVisible}
+        setModalVisible={setRecycleModalVisible}
+      />
       <Modal
         isVisible={modalVisible}
         onBackdropPress={() => setModalVisible(false)}
       >
         <View className="p-4 justify-center items-center">
-          <View className="flex-col justify-stretch items-center bg-white rounded-lg w-6/12 p-4">
+          <View className="flex-col justify-stretch items-center bg-white rounded-3xl w-6/12 py-8 px-4">
             <TouchableOpacity
               onPress={onAddMarker}
-              className="bg-blue-500 py-2 px-4 rounded-lg mb-5"
+              className="bg-[#17A773] py-2 px-4 rounded-[15] mb-5"
             >
               <Text className="text-white font-semibold">Add Bin</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              onPress={() => setModalVisible(false)}
-              className="bg-[#17A773] py-2 px-4 rounded-full"
+              onPress={onAddRecycle}
+              className="bg-[#17A773] py-2 px-4 rounded-[15]"
             >
-              <Text className="text-white font-semibold">Add Cycle</Text>
+              <Text className="text-white font-semibold">Add Recycle</Text>
             </TouchableOpacity>
           </View>
         </View>
