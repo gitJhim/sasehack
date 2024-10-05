@@ -1,7 +1,8 @@
-import MapView, { Marker } from 'react-native-maps';
+import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import { useState, useEffect, useRef } from 'react';
-import { Dimensions, StyleSheet, Pressable, Text, View, Button } from 'react-native';
+import { View, Button, StyleSheet, Dimensions, Pressable, Text, TouchableOpacity } from 'react-native';
 import * as Location from 'expo-location';
+import { Modal, ModalContent } from 'react-native-modals';
 
 interface Marker {
   coordinate: {
@@ -25,6 +26,7 @@ export default function Map() {
   });
   const mapRef = useRef<MapView>(null);;
   const [markers, setMarkers] = useState<Marker[]>([]);
+  const [modalVisible, setModalVisible] = useState(false);
 
   const getCurrentLocation = async () => {
     let { status } = await Location.requestForegroundPermissionsAsync();
@@ -62,6 +64,7 @@ export default function Map() {
       id: markers.length,
     };
     setMarkers(prevMarkers => [...prevMarkers, newMarker]);
+    setModalVisible(false);
   };
 
   const renderMarkers = () => {
@@ -89,13 +92,36 @@ export default function Map() {
   };
 
   return (
-    <View>
+    <View className='flex flex-col justify-center items-center'>
+      <Modal
+        visible={modalVisible}
+        onTouchOutside={() => setModalVisible(false)}
+      >
+        <ModalContent>
+          <View className="p-4">
+            <View className="flex-col justify-stretch items-center">
+              <TouchableOpacity 
+                onPress={addMarker}
+                className="bg-blue-500 py-2 px-4 rounded-lg mb-5"
+              >
+                <Text className="text-white font-semibold">Add Bin</Text>
+              </TouchableOpacity>
+              <TouchableOpacity 
+                onPress={() => setModalVisible(false)}
+                className="bg-red-500 py-2 px-4 rounded-lg"
+              >
+                <Text className="text-white font-semibold">Cancel</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </ModalContent>
+      </Modal>
       <MapView
-        className='w-full h-full'
+        style={styles.map}
         region={region}
         onRegionChangeComplete={setRegion}
         ref={mapRef}
-        provider='google'
+        provider={PROVIDER_GOOGLE}
       >
         <Marker 
           coordinate={myLocation}
@@ -103,10 +129,25 @@ export default function Map() {
         />
         {renderMarkers()}
       </MapView>
-      <View className=''>
-        <Button title='Go to current location' onPress={goToCurrentLocation} />
-        <Button title='Add Marker' onPress={addMarker} />
+      <View className='absolute bottom-20'>
+        <View className='flex flex-row justify-center items-center'>
+          <Button title='Go to current location' onPress={goToCurrentLocation} />
+          <Button title='Add Marker' onPress={() => setModalVisible(true)} />
+        </View>
       </View>
     </View>
   )
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  map: {
+    width: Dimensions.get('window').width,
+    height: Dimensions.get('window').height,
+  },
+});
