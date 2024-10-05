@@ -91,7 +91,7 @@ export default function Map() {
   return (
     <View>
       <MapView
-        style={styles.map}
+        className='w-full h-full'
         region={region}
         onRegionChangeComplete={setRegion}
         ref={mapRef}
@@ -103,23 +103,10 @@ export default function Map() {
         />
         {renderMarkers()}
       </MapView>
-      <View style={styles.button}>
+      <View className=''>
         <Button title='Go to current location' onPress={goToCurrentLocation} />
         <Button title='Add Marker' onPress={addMarker} />
       </View>
     </View>
   )
 }
-
-const styles = StyleSheet.create({
-  map : {
-    width: Dimensions.get('window').width,
-    height: Dimensions.get('window').height,
-  },
-  button : {
-    position: 'absolute',
-    bottom: 20,
-    width: '100%',
-    alignItems: 'center',
-  }
-});
