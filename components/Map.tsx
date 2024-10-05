@@ -12,7 +12,6 @@ import * as Location from "expo-location";
 import Modal from "react-native-modal";
 import { useMapStore } from "../state/stores/mapStore";
 import { useUserStore } from "../state/stores/userStore";
-import SigninModal from "./SignInModal";
 import SignInModal from "./SignInModal";
 import { addNewMarker, getMarkers } from "../utils/db/map";
 
@@ -22,6 +21,8 @@ export default function Map() {
   const addMarker = useMapStore((state) => state.addMarker);
   const user = useUserStore((state) => state.user);
 
+
+  
   const initialLocation = {
     latitude: 37.78825,
     longitude: -122.4324,
