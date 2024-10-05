@@ -17,7 +17,7 @@ import {
 
 GoogleSignin.configure({
   webClientId:
-    "156165157980-on0sckphkk7t3n0ttl9invjlrp8jpn0n.apps.googleusercontent.com",
+    "156165157980-vq7nev50rl4agci83fksoj77pt4ufj1v.apps.googleusercontent.com",
 });
 
 export default function SignInPage() {
@@ -121,9 +121,9 @@ export default function SignInPage() {
             try {
               await GoogleSignin.hasPlayServices();
               const userInfo: any = await GoogleSignin.signIn();
-              if (userInfo.idToken) {
+              if (userInfo.data.idToken) {
                 const { data, error } = await signInUserWithToken(
-                  userInfo.idToken,
+                  userInfo.data.idToken,
                 );
                 if (error) {
                   console.error("Error signing in:", error.message);
