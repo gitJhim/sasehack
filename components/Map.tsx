@@ -2,7 +2,7 @@ import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import { useState, useEffect, useRef } from 'react';
 import { View, Button, StyleSheet, Dimensions, Pressable, Text, TouchableOpacity } from 'react-native';
 import * as Location from 'expo-location';
-import { Modal, ModalContent } from 'react-native-modals';
+import  Modal from 'react-native-modal';
 
 interface Marker {
   coordinate: {
@@ -94,27 +94,25 @@ export default function Map() {
   return (
     <View className='flex flex-col justify-center items-center'>
       <Modal
-        visible={modalVisible}
-        onTouchOutside={() => setModalVisible(false)}
+        isVisible={modalVisible}
+        onBackdropPress={() => setModalVisible(false)}
       >
-        <ModalContent>
-          <View className="p-4">
-            <View className="flex-col justify-stretch items-center">
-              <TouchableOpacity 
-                onPress={addMarker}
-                className="bg-blue-500 py-2 px-4 rounded-lg mb-5"
-              >
-                <Text className="text-white font-semibold">Add Bin</Text>
-              </TouchableOpacity>
-              <TouchableOpacity 
-                onPress={() => setModalVisible(false)}
-                className="bg-red-500 py-2 px-4 rounded-lg"
-              >
-                <Text className="text-white font-semibold">Cancel</Text>
-              </TouchableOpacity>
-            </View>
+        <View className="p-4 justify-center items-center">
+          <View className="flex-col justify-stretch items-center bg-white rounded-lg w-6/12 p-4">
+            <TouchableOpacity 
+              onPress={addMarker}
+              className="bg-blue-500 py-2 px-4 rounded-lg mb-5"
+            >
+              <Text className="text-white font-semibold">Add Bin</Text>
+            </TouchableOpacity>
+            <TouchableOpacity 
+              onPress={() => setModalVisible(false)}
+              className="bg-red-500 py-2 px-4 rounded-lg"
+            >
+              <Text className="text-white font-semibold">Cancel</Text>
+            </TouchableOpacity>
           </View>
-        </ModalContent>
+        </View>
       </Modal>
       <MapView
         style={styles.map}
