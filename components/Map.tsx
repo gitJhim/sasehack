@@ -1,18 +1,24 @@
-import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
-import { useState, useEffect, useRef } from 'react';
-import { View, Button, StyleSheet, Dimensions, Pressable, Text, TouchableOpacity } from 'react-native';
-import * as Location from 'expo-location';
-import  Modal from 'react-native-modal';
-
-interface Marker {
-  coordinate: {
-    latitude: number;
-    longitude: number;
-  };
-  id: number;
-}
+import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
+import { useState, useEffect, useRef } from "react";
+import {
+  View,
+  Button,
+  StyleSheet,
+  Dimensions,
+  Pressable,
+  Text,
+  TouchableOpacity,
+} from "react-native";
+import * as Location from "expo-location";
+import Modal from "react-native-modal";
+import { useMapStore } from "../state/stores/mapStore";
+import { useUserStore } from "../state/stores/userStore";
 
 export default function Map() {
+  const markers = useMapStore((state) => state.markers);
+  const addMarker = useMapStore((state) => state.addMarker);
+  const user = useUserStore((state) => state.user);
+
   const initialLocation = {
     latitude: 37.78825,
     longitude: -122.4324,
@@ -24,15 +30,14 @@ export default function Map() {
     latitudeDelta: 0.0922,
     longitudeDelta: 0.0421,
   });
-  const mapRef = useRef<MapView>(null);;
-  const [markers, setMarkers] = useState<Marker[]>([]);
+  const mapRef = useRef<MapView>(null);
   const [modalVisible, setModalVisible] = useState(false);
 
   const getCurrentLocation = async () => {
     let { status } = await Location.requestForegroundPermissionsAsync();
 
-    if(status !== 'granted'){ 
-      console.warn('Permission to access location was denied');
+    if (status !== "granted") {
+      console.warn("Permission to access location was denied");
       return;
     }
     let location = await Location.getCurrentPositionAsync({});
@@ -44,68 +49,74 @@ export default function Map() {
   }, []);
 
   const goToCurrentLocation = () => {
-    if (myLocation.latitude && myLocation.longitude){
+    if (myLocation.latitude && myLocation.longitude) {
       const newRegion = {
         latitude: myLocation.latitude,
         longitude: myLocation.longitude,
         latitudeDelta: 0.0922,
-        longitudeDelta: 0.0421
-      }
-      mapRef.current?.animateToRegion(newRegion)
+        longitudeDelta: 0.0421,
+      };
+      mapRef.current?.animateToRegion(newRegion);
     }
-  }
+  };
 
-  const addMarker = () => {
+  const onAddMarker = () => {
+    if (!user) {
+      return;
+    }
+
     const newMarker = {
+      id: null,
+      userId: user.id,
       coordinate: {
         latitude: myLocation.latitude,
-        longitude: myLocation.longitude
+        longitude: myLocation.longitude,
       },
-      id: markers.length,
     };
-    setMarkers(prevMarkers => [...prevMarkers, newMarker]);
+
+    addMarker(newMarker);
     setModalVisible(false);
   };
 
   const renderMarkers = () => {
     return markers.map((marker) => {
-      return (
-        (marker.coordinate.latitude === myLocation.latitude && marker.coordinate.longitude === myLocation.longitude) ? 
-        <Marker 
+      return marker.coordinate.latitude === myLocation.latitude &&
+        marker.coordinate.longitude === myLocation.longitude ? (
+        <Marker
           key={marker.id}
           coordinate={{
             latitude: marker.coordinate.latitude,
-            longitude: marker.coordinate.longitude+0.0002,
+            longitude: marker.coordinate.longitude + 0.0002,
           }}
           title={`Bin ${marker.id}`}
-          image={require('../assets/marker.png')}
+          image={require("../assets/marker.png")}
         />
-        :
+      ) : (
         <Marker
           key={marker.id}
           coordinate={marker.coordinate}
           title={`Bin ${marker.id}`}
-          image={require('../assets/marker.png')}
+          image={require("../assets/marker.png")}
         />
       );
     });
   };
 
   return (
-    <View className='flex flex-col justify-center items-center'>
+    <View className="flex flex-col justify-center items-center">
       <Modal
         isVisible={modalVisible}
         onBackdropPress={() => setModalVisible(false)}
       >
         <View className="p-4 justify-center items-center">
           <View className="flex-col justify-stretch items-center bg-white rounded-lg w-6/12 p-4">
-            <TouchableOpacity 
-              onPress={addMarker}
+            <TouchableOpacity
+              onPress={onAddMarker}
               className="bg-blue-500 py-2 px-4 rounded-lg mb-5"
             >
               <Text className="text-white font-semibold">Add Bin</Text>
             </TouchableOpacity>
-            <TouchableOpacity 
+            <TouchableOpacity
               onPress={() => setModalVisible(false)}
               className="bg-red-500 py-2 px-4 rounded-lg"
             >
@@ -121,31 +132,32 @@ export default function Map() {
         ref={mapRef}
         provider={PROVIDER_GOOGLE}
       >
-        <Marker 
-          coordinate={myLocation}
-          title='My Location'
-        />
+        <Marker coordinate={myLocation} title="My Location" />
         {renderMarkers()}
       </MapView>
-      <View className='absolute bottom-20'>
-        <View className='flex flex-row justify-center items-center'>
-          <Button title='Go to current location' onPress={goToCurrentLocation} />
-          <Button title='Add Marker' onPress={() => setModalVisible(true)} />
+      <View className="absolute bottom-20">
+        <View className="flex flex-row justify-center items-center">
+          <Button
+            title="Go to current location"
+            onPress={goToCurrentLocation}
+          />
+          <Button title="Add Marker" onPress={() => setModalVisible(true)} />
         </View>
       </View>
     </View>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: "#fff",
+    alignItems: "center",
+    justifyContent: "center",
   },
   map: {
-    width: Dimensions.get('window').width,
-    height: Dimensions.get('window').height,
+    width: Dimensions.get("window").width,
+    height: Dimensions.get("window").height,
   },
 });
+
