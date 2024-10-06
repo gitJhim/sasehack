@@ -33,7 +33,7 @@ export default function TopBar() {
                     <TextInput className="mr-9" placeholder="Search" />
                 </View>
                 <Pressable onPress={() => router.push("/profile")} className="flex-row items-center mx-auto">
-                    <Image source={user.avatarURL ? { uri: user.avatarURL } : require("../assets/dummyProfile.png")} alt="profile" width={40} height={40}/>
+                    <Image source={user.avatar_url ? { uri: user.avatar_url } : require("../assets/dummyProfile.png")} alt="profile" width={40} height={40}/>
                 </Pressable>
                 <View className="flex-row p-2 h-12 w-40 rounded-full items-center bg-[#B1ECC8]">
                     <Image source={require("../assets/kid_star.png")} alt="star" width={20} height={20}/>
