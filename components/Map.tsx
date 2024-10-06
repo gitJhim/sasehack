@@ -26,19 +26,18 @@ export default function Map() {
     latitude: 39.75,
     longitude: -84.19,
   };
-  const [myLocation, setMyLocation] = useState(initialLocation);
+  const [myLocation, setMyLocation] = useState<Location.LocationObjectCoords | null>(null);
   const [region, setRegion] = useState({
     latitude: initialLocation.latitude,
     longitude: initialLocation.longitude,
-    latitudeDelta: 0.3922,
-    longitudeDelta: 0.3421,
+    latitudeDelta: 0.0922,
+    longitudeDelta: 0.0421,
   });
   const mapRef = useRef<MapView>(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [signInModalVisible, setSignInModalVisible] = useState(false);
   const [recycleModalVisible, setRecycleModalVisible] = useState(false);
   const [addBinModalVisible, setAddBinModalVisible] = useState(false);
-
   const getCurrentLocation = async () => {
     let { status } = await Location.requestForegroundPermissionsAsync();
 
@@ -65,7 +64,7 @@ export default function Map() {
   }, []);
 
   const goToCurrentLocation = () => {
-    if (myLocation.latitude && myLocation.longitude) {
+    if (myLocation) {
       const newRegion = {
         latitude: myLocation.latitude,
         longitude: myLocation.longitude,
@@ -130,12 +129,14 @@ export default function Map() {
         setModalVisible={setRecycleModalVisible}
         cycleId={"af51bef3-c370-4e57-b769-70794e848492"}
       />
+      {myLocation && (
       <AddBinModal
         isVisible={addBinModalVisible}
         setModalVisible={setAddBinModalVisible}
         latitude={myLocation.latitude}
         longitude={myLocation.longitude}
       />
+      )}
       <Modal
         isVisible={modalVisible}
         onBackdropPress={() => setModalVisible(false)}
@@ -163,9 +164,13 @@ export default function Map() {
         onRegionChangeComplete={setRegion}
         ref={mapRef}
         provider={PROVIDER_GOOGLE}
-        onMapReady={goToCurrentLocation}
+        onMapReady={() => {
+          getCurrentLocation();
+          goToCurrentLocation();
+        }}
       >
-        <Marker coordinate={myLocation} title="My Location" />
+        {myLocation && (
+        <Marker coordinate={{ latitude: myLocation.latitude, longitude: myLocation.longitude }} title="My Location" />)}
         {renderMarkers()}
       </MapView>
       <TouchableOpacity
