@@ -10,7 +10,7 @@ const Ranking = () => {
     <View className="flex-1 bg-gray-100">
       <TopBar />
       <View className="flex-1 items-center">
-        <Text className="text-4xl font-bold p-4">Rankings</Text>
+        <Text className="text-4xl font-sans p-4">Rankings</Text>
         <View className="flex-row w-11/12 mb-[-1px]">
           {categories.map((category) => (
             <Pressable
