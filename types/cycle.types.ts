@@ -2,7 +2,7 @@ export type Cycle = {
   id: string | null;
   userId: string | null;
   markerId: string | null;
-  item: CycleItem;
+  items: CycleItem[];
   createdAt: string | null;
 };
 

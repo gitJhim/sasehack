@@ -1,18 +1,24 @@
-import { Text, TextInput, TouchableOpacity, View, Image } from "react-native";
+import { Text, TouchableOpacity, View, Image } from "react-native";
 import Modal from "react-native-modal";
 import { useState } from "react";
 import DropDownPicker from "react-native-dropdown-picker";
-import { Ionicons } from "@expo/vector-icons";
-import { ValueType } from "react-native-dropdown-picker";
-import { Cycle, CycleItem } from "../types/cycle.types";
+import { CycleItem } from "../types/cycle.types";
+import { useUserStore } from "../state/stores/userStore";
+import { addNewCycle } from "../utils/db/cycle";
 
 export default function AddCycleModal({
   isVisible,
   setModalVisible,
+  cycleId,
 }: {
   isVisible: boolean;
   setModalVisible: (visible: boolean) => void;
+  cycleId: string;
 }) {
+  const user = useUserStore((state) => state.user);
+  if (!user) {
+    return null;
+  }
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(null);
   const [items, setItems] = useState([
@@ -56,7 +62,7 @@ export default function AddCycleModal({
           type: value,
           quantity: 1,
           id: null,
-          cycleId: null,
+          cycleId: cycleId,
         },
       ]);
       setValue(null);
@@ -73,6 +79,19 @@ export default function AddCycleModal({
       i === index ? { ...item, quantity: Math.max(1, newQuantity) } : item,
     );
     setRecycleItems(newItems);
+  };
+
+  const onSubmit = async () => {
+    const newCycle = {
+      id: cycleId,
+      userId: user.id,
+      markerId: null,
+      items: recycleItems,
+      createdAt: null,
+    };
+
+    await addNewCycle(newCycle);
+    setModalVisible(false);
   };
 
   return (
@@ -141,10 +160,10 @@ export default function AddCycleModal({
         ))}
 
         <TouchableOpacity
-          onPress={() => setModalVisible(false)}
+          onPress={() => onSubmit()}
           className="bg-blue-500 px-4 py-3 rounded-lg mt-4"
         >
-          <Text className="text-white font-semibold text-center">Close</Text>
+          <Text className="text-white font-semibold text-center">Submit</Text>
         </TouchableOpacity>
       </View>
     </Modal>

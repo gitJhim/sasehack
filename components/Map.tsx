@@ -136,6 +136,7 @@ export default function Map() {
       <AddCycleModal
         isVisible={recycleModalVisible}
         setModalVisible={setRecycleModalVisible}
+        cycleId={"af51bef3-c370-4e57-b769-70794e848492"}
       />
       <Modal
         isVisible={modalVisible}
