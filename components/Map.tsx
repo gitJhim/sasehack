@@ -15,39 +15,9 @@ import { useUserStore } from "../state/stores/userStore";
 import SignInModal from "./SignInModal";
 import { getMarkerPhoto, getMarkers } from "../utils/db/map";
 import AddCycleModal from "./AddCycleModal";
-import AddBinModal from "./AddBinModal";
+import { router } from "expo-router";
 import { Marker as MarkerType } from "../types/map.types";
 import uuid from "react-native-uuid";
-
-const CustomCallout = ({
-  marker,
-  onInfoPress,
-  onAddCyclePress,
-}: {
-  marker: MarkerType;
-  onInfoPress: () => void;
-  onAddCyclePress: () => void;
-}) => (
-  <View className="bg-white rounded-lg p-2.5 w-40">
-    <Text className="text-base font-bold mb-1 text-center">
-      Bin {marker.id}
-    </Text>
-    <View className="flex-row justify-around">
-      <TouchableOpacity
-        onPress={onInfoPress}
-        className="bg-[#17A773] px-2.5 py-1.5 rounded"
-      >
-        <Text className="text-white font-bold">Info</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        onPress={onAddCyclePress}
-        className="bg-[#17A773] px-2.5 py-1.5 rounded"
-      >
-        <Text className="text-white font-bold">Add Cycle</Text>
-      </TouchableOpacity>
-    </View>
-  </View>
-);
 
 export default function Map() {
   const markers = useMapStore((state) => state.markers);
@@ -57,20 +27,19 @@ export default function Map() {
     latitude: 39.75,
     longitude: -84.19,
   };
-  const [myLocation, setMyLocation] = useState(initialLocation);
+  const [myLocation, setMyLocation] = useState<Location.LocationObjectCoords | null>(null);
   const [region, setRegion] = useState({
     latitude: initialLocation.latitude,
     longitude: initialLocation.longitude,
-    latitudeDelta: 0.3922,
-    longitudeDelta: 0.3421,
+    latitudeDelta: 0.0922,
+    longitudeDelta: 0.0421,
   });
   const mapRef = useRef<MapView>(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [signInModalVisible, setSignInModalVisible] = useState(false);
   const [recycleModalVisible, setRecycleModalVisible] = useState(false);
   const [addBinModalVisible, setAddBinModalVisible] = useState(false);
-  const [selectedMarker, setSelectedMarker] = useState<string | null>(null);
-
+  const [selectedMarker, setSelectedMarker] = useState<MarkerType>();
   const getCurrentLocation = async () => {
     let { status } = await Location.requestForegroundPermissionsAsync();
 
@@ -97,7 +66,7 @@ export default function Map() {
   }, []);
 
   const goToCurrentLocation = () => {
-    if (myLocation.latitude && myLocation.longitude) {
+    if (myLocation) {
       const newRegion = {
         latitude: myLocation.latitude,
         longitude: myLocation.longitude,
@@ -152,8 +121,6 @@ export default function Map() {
           longitude: marker.longitude,
         }}
         image={require("../assets/marker.png")}
-        onPress={() => setSelectedMarker(marker.id)}
-        onDeselect={() => setSelectedMarker(null)}
       >
         <Callout onPress={() => setRecycleModalVisible(true)}>
           <View className="bg-white rounded-2xl overflow-hidden shadow-lg w-72">
@@ -195,22 +162,34 @@ export default function Map() {
       <AddCycleModal
         isVisible={recycleModalVisible}
         setModalVisible={setRecycleModalVisible}
-        markerId={selectedMarker}
+        markerId={selectedMarker?.id || uuid.v4().toString()}
         cycleId={uuid.v4().toString()}
       />
-      <AddBinModal
-        isVisible={addBinModalVisible}
-        setModalVisible={setAddBinModalVisible}
-        latitude={myLocation.latitude}
-        longitude={myLocation.longitude}
-      />
+      <Modal
+        isVisible={modalVisible}
+        onBackdropPress={() => setModalVisible(false)}
+      >
+        <View className="p-4 justify-center items-center">
+          <View className="flex-col justify-stretch items-center bg-white rounded-3xl w-6/12 py-8 px-4">
+            <TouchableOpacity
+              onPress={onAddMarker}
+              className="bg-[#17A773] py-2 px-4 rounded-[15] mb-5"
+            >
+              <Text className="text-white font-semibold">Add Bin</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
       <MapView
         style={styles.map}
         region={region}
         onRegionChangeComplete={setRegion}
         ref={mapRef}
         provider={PROVIDER_GOOGLE}
-        onMapReady={goToCurrentLocation}
+        onMapReady={() => {
+          getCurrentLocation();
+          goToCurrentLocation();
+        }}
       >
         {renderMarkers()}
       </MapView>
@@ -246,7 +225,7 @@ const styles = StyleSheet.create({
   },
   addButton: {
     position: "absolute",
-    bottom: Dimensions.get("window").height * 0.15,
+    bottom: Dimensions.get("window").height * 0.18,
     right: Dimensions.get("window").width * 0.05,
     backgroundColor: "#17A773",
     padding: 16,
@@ -254,7 +233,7 @@ const styles = StyleSheet.create({
   },
   relocateButton: {
     position: "absolute",
-    bottom: Dimensions.get("window").height * 0.25,
+    bottom: Dimensions.get("window").height * 0.3,
     right: Dimensions.get("window").width * 0.05,
     backgroundColor: "#e2e8f0",
     padding: 16,

@@ -39,6 +39,7 @@ export default function AppLayout() {
           <Stack.Screen name="index" options={{ headerShown: false }} />
           <Stack.Screen name="profile" options={{ headerShown: false }} />
           <Stack.Screen name="ranking" options={{ headerShown: false }} />
+          <Stack.Screen name="levelup" options={{ headerShown: false }} />
         </Stack>
         <Navigator />
       </ErrorBoundary>
