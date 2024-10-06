@@ -16,29 +16,7 @@ import SignInModal from "./SignInModal";
 import { getMarkers } from "../utils/db/map";
 import AddCycleModal from "./AddCycleModal";
 import AddBinModal from "./AddBinModal";
-import { Marker as MarkerType } from "../types/map.types";
-
-const CustomCallout = ({
-  marker,
-  onInfoPress,
-  onAddCyclePress} :
-{
-  marker: MarkerType;
-  onInfoPress: () => void;
-  onAddCyclePress: () => void;
-}) => (
-  <View className="bg-white rounded-lg p-2.5 w-40">
-    <Text className="text-base font-bold mb-1 text-center">Bin {marker.id}</Text>
-    <View className="flex-row justify-around">
-      <TouchableOpacity onPress={onInfoPress} className="bg-[#17A773] px-2.5 py-1.5 rounded">
-        <Text className="text-white font-bold">Info</Text>
-      </TouchableOpacity>
-      <TouchableOpacity onPress={onAddCyclePress} className="bg-[#17A773] px-2.5 py-1.5 rounded">
-        <Text className="text-white font-bold">Add Cycle</Text>
-      </TouchableOpacity>
-    </View>
-  </View>
-);
+import { router } from "expo-router";
 
 export default function Map() {
   const markers = useMapStore((state) => state.markers);
@@ -96,6 +74,7 @@ export default function Map() {
         longitudeDelta: 0.0421,
       };
       mapRef.current?.animateToRegion(newRegion);
+      router.push("/levelup");
     }
   };
 
