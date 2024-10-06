@@ -10,4 +10,6 @@ export type Marker = {
   userId: string | null;
   latitude: number;
   longitude: number;
+  title: string | null;
+  createdAt: string | null;
 };

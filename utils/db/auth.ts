@@ -1,5 +1,7 @@
 import { Session } from "@supabase/supabase-js";
 import { supabase } from "../supabase";
+import { useUserStore } from "../../state/stores/userStore";
+import { Event } from "../../types/user.types";
 
 export const insertNewUser = async (session: Session) => {
   const { data, error } = await supabase
@@ -12,6 +14,8 @@ export const insertNewUser = async (session: Session) => {
         avatar_url: session.user.user_metadata.avatar_url,
         last_sign_in: session.user.last_sign_in_at,
         school: null,
+        level: 1,
+        xp: 0,
       },
     ])
     .select("*")
@@ -53,4 +57,71 @@ export const updateUser = async (session: Session) => {
     .select("*");
 
   return { user: data, error };
+};
+
+export const loadLogs = async (userId: string) => {
+  const { data, error } = await supabase
+    .from("logs")
+    .select("*")
+    .eq("user_id", userId);
+
+  useUserStore.getState().setLogs(data as Event[]);
+
+  return { data: data as Event[], error };
+};
+
+export const checkAndUpdateUser = async (session: Session | null) => {
+  if (!session) {
+    return;
+  }
+  let checkUser: any;
+  console.log("Checking and updating user...");
+  try {
+    console.log(session.user.id);
+    const { user, error } = await doesUserExistById(session.user.id);
+
+    if (error) {
+      console.error("Error checking user:", error.message);
+      return;
+    }
+
+    checkUser = user;
+
+    console.log("Fetched user:", user);
+
+    if (!user) {
+      console.log("User not found, inserting new user...");
+
+      const { user: data, error: insertError } = await insertNewUser(session);
+
+      if (insertError) {
+        console.error("Error adding user:", insertError.message);
+        return;
+      }
+
+      checkUser = data;
+      console.log("Inserted new user:", user);
+    } else {
+      console.log("User found, updating user...");
+      const { user: updatedUser, error: updateError } =
+        await updateUser(session);
+
+      if (updateError) {
+        console.error("Error updating user:", updateError.message);
+        return;
+      }
+      checkUser = updatedUser?.length ? updatedUser[0] : null;
+      console.log("Updated user:", checkUser);
+    }
+
+    if (!checkUser) {
+      console.error("User is null after database operations.");
+      return;
+    }
+
+    console.log("User data set in store:", checkUser);
+    useUserStore.getState().setUser(checkUser);
+  } catch (error: any) {
+    console.error("Unexpected error:", error);
+  }
 };

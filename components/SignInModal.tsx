@@ -13,7 +13,7 @@ export default function SignInModal({
   return (
     <Modal isVisible={isVisible} onBackdropPress={() => setModalVisible(false)}>
       <View className="p-4 justify-center items-center">
-        <View className="flex-col justify-stretch items-center bg-white rounded-[25] w-6/12 py-8 px-2">
+        <View className="flex-col justify-stretch items-center bg-white rounded-[25] w-10/12 py-8 px-2">
           <SignInPage />
           <TouchableOpacity
             onPress={() => setModalVisible(false)}
