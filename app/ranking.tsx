@@ -5,14 +5,18 @@ import Geocoder from 'react-native-geocoding';
 import { GOOGLE_MAPS_API_KEY } from '@env';
 import { useMapStore } from "../state/stores/mapStore";
 import { Marker } from "../types/map.types";
+import { User } from "../types/user.types";
+import { getUsers } from "../utils/db/auth";
 
 type Location = {
   id: string;
+  title: string;
   latitude: number;
   longitude: number;
   city: string;
   state: string;
   fullAddress: string;
+  userId: string;
 }
 
 const Ranking = () => {
@@ -20,6 +24,7 @@ const Ranking = () => {
   const categories = ["City", "State", "User", "Bin"];
   const [selectedCategory, setSelectedCategory] = useState("City");
   const markers = useMapStore((state) => state.markers);
+  const [users, setUsers] = useState<User[]>([]);
   const [locations, setLocations] = useState<Location[]>([]);
   const [top5, setTop5] = useState<{name: string, count: number}[]>([]);
 
@@ -29,6 +34,7 @@ const Ranking = () => {
       const address = json.results[0].address_components;
       const city = address.find((item) => item.types.includes("locality"))?.long_name;
       const state = address.find((item) => item.types.includes("administrative_area_level_1"))?.long_name;
+      const title = location.title;
 
       if (city && state) {
         return {
@@ -37,7 +43,8 @@ const Ranking = () => {
           longitude: location.longitude,
           city,
           state,
-          fullAddress: `${city}, ${state}`
+          fullAddress: `${city}, ${state}`,
+          title,
         };
       }
     } catch (error) {
@@ -63,14 +70,22 @@ const Ranking = () => {
         }, {} as Record<string, number>);
         break;
       case 'User':
-        frequencyMap = locs.reduce((acc, location) => {
-          acc[location.id] = (acc[location.id] || 0) + 1;
+        const userExperienceMap = users.reduce((acc, user) => {
+          if (user && user.name && user.level) {
+            acc[user.name] = user.level;
+          }
           return acc;
         }, {} as Record<string, number>);
-        break;
+        const sortedUsers = Object.entries(userExperienceMap)
+          .sort(([, a], [, b]) => b - a)
+          .slice(0, 5)
+          .map(([name, level]) => ({ name, count: level }));
+        setTop5(sortedUsers);
+        return;
       case 'Bin':
         frequencyMap = locs.reduce((acc, location) => {
-          acc[location.id] = (acc[location.id] || 0) + 1;
+          acc[location.title] = (acc[location.title] || 0) + 1;
+          console.log(locs);
           return acc;
         }, {} as Record<string, number>);
         break;
@@ -110,12 +125,22 @@ const Ranking = () => {
     setSelectedCategory(category);
   };
 
+  useEffect(() => {
+    const loadUsers = async () => {
+      const users = await getUsers();
+      console.log(users);
+      setUsers(users.data);
+    };
+    loadUsers();
+  }, []);
+    
+
   return (
     <View className="flex-1 bg-gray-100">
       <TopBar />
       <View className="flex-1 items-center">
         <Text className="text-4xl font-bold p-4">Rankings</Text>
-        <View className="flex-row w-11/12 mb-[-1px]">
+        <View className="flex-row w-11/12 mb-[-1px] justify-evenly">
           {categories.map((category) => (
             <Pressable
               key={category}
@@ -124,14 +149,14 @@ const Ranking = () => {
                 selectedCategory === category
                   ? "bg-[#17A773]"
                   : " text-black"
-              } rounded-lg py-2 px-4`}
+              } rounded-t-lg py-2 px-8`}
             >
               <Text
                 className={`text-center ${
                   selectedCategory === category
                     ? "text-white font-semibold"
                     : "text-gray-700"
-                }`}
+                } text-lg`}
               >
                 {category}
               </Text>

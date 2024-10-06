@@ -36,3 +36,10 @@ export enum LogEventType {
   NEW_CYCLE = "NEW_CYCLE",
   NEW_MARKER = "NEW_MARKER",
 }
+
+export type AllUserStore = {
+  users: User[];
+
+  addUser: (user: User) => void;
+  setUsers: (users: User[]) => void;
+};
