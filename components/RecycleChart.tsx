@@ -1,7 +1,8 @@
 import { ContributionGraph } from "react-native-chart-kit";
 import { Dimensions, View } from "react-native";
+import { Cycle } from "../types/cycle.types";
 
-const RecycleChart = () => {
+const RecycleChart = ({ cycles }: { cycles: Cycle[] }) => {
   const chartConfig = {
     backgroundGradientFrom: "transparent",
     backgroundGradientFromOpacity: 0,
@@ -16,15 +17,26 @@ const RecycleChart = () => {
 
   const tootltipDataAttrs: any = {};
 
+  function formatDate(dateString: string): string {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  }
+
   const chartData = () => {
-    const data = [
-      { date: "2024-10-05", count: 2 },
-      { date: "2024-09-05", count: 0 },
-      { date: "2024-08-05", count: 1 },
-      { date: "2024-09-15", count: 4 },
-      { date: "2024-08-15", count: 3 },
-      { date: "2024-10-15", count: 2 },
-    ];
+    const data = [] as any[];
+    for (const cycle of cycles) {
+      let count = 0;
+      for (const item of cycle.items) {
+        count += item.quantity;
+      }
+      data.push({
+        date: formatDate(cycle.created_at!),
+        count,
+      });
+    }
     return data;
   };
 

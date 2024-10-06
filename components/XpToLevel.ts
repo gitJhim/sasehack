@@ -1,14 +1,10 @@
-// Define an interface for User
-interface User {
-    level: number;
-    xp: number;
-}
+import { User } from "../types/user.types";
 
-// Function to calculate experience needed to level up
 function XpToLevel(user: User): number {
-    // The experience needed increases as the level increases
-    return user.level * 100; // Example: 100 * level
+  if (user.level === null || user.xp === null) {
+    return 0;
+  }
+
+  return user.level * 100;
 }
 export default XpToLevel;
-
-

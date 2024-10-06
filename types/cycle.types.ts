@@ -3,7 +3,7 @@ export type Cycle = {
   userId: string | null;
   markerId: string | null;
   items: CycleItem[];
-  createdAt: string | null;
+  created_at: string | null;
 };
 
 export type CycleItem = {

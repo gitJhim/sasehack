@@ -55,7 +55,7 @@ const Profile = () => {
         <View className="flex-1 mt-4">
           <XpBar />
         </View>
-        <RecycleChart />
+        <RecycleChart cycles={cycles} />
         <ActivityLog cycles={cycles} markers={markers} />
       </ScrollView>
     </View>
