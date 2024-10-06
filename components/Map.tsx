@@ -14,6 +14,8 @@ import { useMapStore } from "../state/stores/mapStore";
 import { useUserStore } from "../state/stores/userStore";
 import SignInModal from "./SignInModal";
 import { addNewMarker, getMarkers } from "../utils/db/map";
+import AddCycleModal from "./AddCycleModal";
+import AddBinModal from "./AddBinModal";
 
 export default function Map() {
   const markers = useMapStore((state) => state.markers);
@@ -36,6 +38,8 @@ export default function Map() {
   const mapRef = useRef<MapView>(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [signInModalVisible, setSignInModalVisible] = useState(false);
+  const [recycleModalVisible, setRecycleModalVisible] = useState(false);
+  const [addBinModalVisible, setAddBinModalVisible] = useState(false);
 
   const getCurrentLocation = async () => {
     let { status } = await Location.requestForegroundPermissionsAsync();
@@ -79,15 +83,15 @@ export default function Map() {
       setSignInModalVisible(true);
       return;
     }
+    setAddBinModalVisible(true);
+  };
 
-    let newMarker = {
-      id: null,
-      userId: user.id,
-      latitude: myLocation.latitude,
-      longitude: myLocation.longitude,
-    };
-
-    await addNewMarker(newMarker);
+  const onAddRecycle = async () => {
+    if (!user) {
+      setSignInModalVisible(true);
+      return;
+    }
+    setRecycleModalVisible(true);
   };
 
   const renderMarkers = () => {
@@ -124,23 +128,33 @@ export default function Map() {
         isVisible={signInModalVisible}
         setModalVisible={setSignInModalVisible}
       />
+      <AddCycleModal
+        isVisible={recycleModalVisible}
+        setModalVisible={setRecycleModalVisible}
+      />
+      <AddBinModal
+        isVisible={addBinModalVisible}
+        setModalVisible={setAddBinModalVisible}
+        latitude={myLocation.latitude}
+        longitude={myLocation.longitude}
+      />
       <Modal
         isVisible={modalVisible}
         onBackdropPress={() => setModalVisible(false)}
       >
         <View className="p-4 justify-center items-center">
-          <View className="flex-col justify-stretch items-center bg-white rounded-lg w-6/12 p-4">
+          <View className="flex-col justify-stretch items-center bg-white rounded-3xl w-6/12 py-8 px-4">
             <TouchableOpacity
               onPress={onAddMarker}
-              className="bg-blue-500 py-2 px-4 rounded-lg mb-5"
+              className="bg-[#17A773] py-2 px-4 rounded-[15] mb-5"
             >
               <Text className="text-white font-semibold">Add Bin</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              onPress={() => setModalVisible(false)}
-              className="bg-[#17A773] py-2 px-4 rounded-full"
+              onPress={onAddRecycle}
+              className="bg-[#17A773] py-2 px-4 rounded-[15]"
             >
-              <Text className="text-white font-semibold">Add Cycle</Text>
+              <Text className="text-white font-semibold">Add Recycle</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -155,23 +169,11 @@ export default function Map() {
         <Marker coordinate={myLocation} title="My Location" />
         {renderMarkers()}
       </MapView>
-      <TouchableOpacity
-        onPress={goToCurrentLocation}
-        className="bg-gray-300 rounded-3xl p-4 absolute bottom-[13%] right-5"
-      >
-        <Image
-          source={require("../assets/self.png")}
-          style={{ width: 40, height: 40 }}
-        />
+      <TouchableOpacity onPress={goToCurrentLocation} style={styles.relocateButton}>
+          <Image source={require('../assets/self.png')} style={{ width: 40, height: 40 }} />
       </TouchableOpacity>
-      <TouchableOpacity
-        onPress={() => setModalVisible(true)}
-        className="bg-[#17A773] p-4 rounded-3xl absolute bottom-5 right-5"
-      >
-        <Image
-          source={require("../assets/add_2.png")}
-          style={{ width: 40, height: 40 }}
-        />
+      <TouchableOpacity onPress={() => setModalVisible(true)} style={styles.addButton}>
+          <Image source={require('../assets/add_2.png')} style={{ width: 40, height: 40 }} />
       </TouchableOpacity>
     </View>
   );
@@ -187,5 +189,21 @@ const styles = StyleSheet.create({
   map: {
     width: Dimensions.get("window").width,
     height: Dimensions.get("window").height,
+  },
+  addButton: {
+    position: 'absolute',
+    bottom: Dimensions.get('window').height * 0.15,
+    right: Dimensions.get('window').width * 0.05,
+    backgroundColor: '#17A773',
+    padding: 16,
+    borderRadius: 24,
+  },
+  relocateButton: {
+    position: 'absolute',
+    bottom: Dimensions.get('window').height * 0.25,
+    right: Dimensions.get('window').width * 0.05,
+    backgroundColor: '#e2e8f0',
+    padding: 16,
+    borderRadius: 24,
   },
 });
