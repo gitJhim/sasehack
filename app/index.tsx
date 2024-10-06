@@ -1,10 +1,21 @@
-
 import React from 'react';
 import { View, StyleSheet, Text } from 'react-native';
-import ImageAnalysis from './ImageAnalysis';
+import ImageAnalysis from '../components/ImageAnalysis';
+
+// Import or define the AnalysisResult interface
+interface AnalysisResult {
+  binsDetected: number;
+  recyclableItemsDetected: number;
+  binFullness: string;
+  detectedObjects: string[];
+  tags: string[];
+  description: string;
+  confidence: string;
+  recommendations: string;
+}
 
 export default function Index() {
-  const handleAnalysisComplete = (result: string, imageUri: string) => {
+  const handleAnalysisComplete = (result: AnalysisResult, imageUri: string) => {
     console.log('Analysis result:', result);
     console.log('Image URI:', imageUri);
     // You can add more logic here to handle the analysis result
@@ -21,14 +32,14 @@ export default function Index() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#fff',
     alignItems: 'center',
-    justifyContent: 'flex-start',
-    padding: 50,
-    backgroundColor: '#f0f0f0',
+    justifyContent: 'center',
+    padding: 20,
   },
   title: {
     fontSize: 24,
-    fontWeight: 'bold',  
-    marginBottom: 100,
+    fontWeight: 'bold',
+    marginBottom: 20,
   },
 });

@@ -34,13 +34,30 @@
     "extra": {
       "eas": {
         "projectId": "8f2c42c1-882d-4b95-ac9b-04129828a5fc"
+      },
+      "router": {
+        "origin": false
       }
     },
     "plugins": [
+      [
       "expo-image-picker",
-      {
+        {
           "photosPermission": "The app accesses your photos to analyze recycling bins."
-      },
+        }
+      ],
+      [
+      "expo-camera",
+        {
+          "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera."
+        }
+      ],
+      [
+      "react-native-vision-camera",
+        {
+          "cameraPermissionText": "$(PRODUCT_NAME) needs access to your Camera."
+        }
+      ],
       "expo-router",
       [
         
