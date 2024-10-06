@@ -15,7 +15,6 @@ import { useUserStore } from "../state/stores/userStore";
 import SignInModal from "./SignInModal";
 import { getMarkers } from "../utils/db/map";
 import AddCycleModal from "./AddCycleModal";
-import AddBinModal from "./AddBinModal";
 import { router } from "expo-router";
 import { Marker as MarkerType } from "../types/map.types";
 import uuid from "react-native-uuid";
@@ -40,6 +39,7 @@ export default function Map() {
   const [signInModalVisible, setSignInModalVisible] = useState(false);
   const [recycleModalVisible, setRecycleModalVisible] = useState(false);
   const [addBinModalVisible, setAddBinModalVisible] = useState(false);
+  const [selectedMarker, setSelectedMarker] = useState<MarkerType>();
   const getCurrentLocation = async () => {
     let { status } = await Location.requestForegroundPermissionsAsync();
 
@@ -131,17 +131,9 @@ export default function Map() {
       <AddCycleModal
         isVisible={recycleModalVisible}
         setModalVisible={setRecycleModalVisible}
-        markerId={selectedMarker}
+        markerId={selectedMarker?.id || uuid.v4().toString()}
         cycleId={uuid.v4().toString()}
       />
-      {myLocation && (
-      <AddBinModal
-        isVisible={addBinModalVisible}
-        setModalVisible={setAddBinModalVisible}
-        latitude={myLocation.latitude}
-        longitude={myLocation.longitude}
-      />
-      )}
       <Modal
         isVisible={modalVisible}
         onBackdropPress={() => setModalVisible(false)}
@@ -153,12 +145,6 @@ export default function Map() {
               className="bg-[#17A773] py-2 px-4 rounded-[15] mb-5"
             >
               <Text className="text-white font-semibold">Add Bin</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={onAddRecycle}
-              className="bg-[#17A773] py-2 px-4 rounded-[15]"
-            >
-              <Text className="text-white font-semibold">Add Recycle</Text>
             </TouchableOpacity>
           </View>
         </View>
