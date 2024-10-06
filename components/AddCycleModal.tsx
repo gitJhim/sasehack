@@ -1,100 +1,170 @@
-import { Text, TextInput, TouchableOpacity, View } from "react-native";
+import { Text, TouchableOpacity, View, Image } from "react-native";
 import Modal from "react-native-modal";
 import { useState } from "react";
 import DropDownPicker from "react-native-dropdown-picker";
-import { Ionicons } from "@expo/vector-icons";
-import { ValueType } from "react-native-dropdown-picker";
-
-type RecycleItem = {
-  id: string;
-  type: ValueType | null;
-  count: string;
-  isOpen: boolean;
-};
+import { CycleItem } from "../types/cycle.types";
+import { useUserStore } from "../state/stores/userStore";
+import { addNewCycle } from "../utils/db/cycle";
 
 export default function AddCycleModal({
   isVisible,
   setModalVisible,
+  cycleId,
 }: {
   isVisible: boolean;
   setModalVisible: (visible: boolean) => void;
+  cycleId: string;
 }) {
-  const [isOpened, setIsOpened] = useState(false);
+  const user = useUserStore((state) => state.user);
+  if (!user) {
+    return null;
+  }
+  const [open, setOpen] = useState(false);
   const [value, setValue] = useState(null);
   const [items, setItems] = useState([
-    { label: "Bottle", value: 1 },
-    { label: "Bag", value: 2 },
-    { label: "Can", value: 3 },
-  ]);
-  const [itemsCount, setItemsCount] = useState(1);
-  const [recycleItems, setRecycleItems] = useState<RecycleItem[]>([
-    { id: Date.now().toString(), type: null, count: '', isOpen: false }
+    {
+      label: "Plastic",
+      value: "plastic",
+      icon: () => (
+        <Image source={{ uri: "/api/placeholder/50/50" }} className="w-6 h-6" />
+      ),
+    },
+    {
+      label: "Paper",
+      value: "paper",
+      icon: () => (
+        <Image source={{ uri: "/api/placeholder/50/50" }} className="w-6 h-6" />
+      ),
+    },
+    {
+      label: "Glass",
+      value: "glass",
+      icon: () => (
+        <Image source={{ uri: "/api/placeholder/50/50" }} className="w-6 h-6" />
+      ),
+    },
+    {
+      label: "Metal",
+      value: "metal",
+      icon: () => (
+        <Image source={{ uri: "/api/placeholder/50/50" }} className="w-6 h-6" />
+      ),
+    },
   ]);
 
-  const addItem = () => {
-    if (recycleItems.length < 5) {
-      setRecycleItems(prevItems => [
-        ...prevItems, 
-        { id: Date.now().toString(), type: null, count: '', isOpen: false }
+  const [recycleItems, setRecycleItems] = useState([] as CycleItem[]);
+
+  const addRecycleItem = () => {
+    if (value) {
+      setRecycleItems([
+        ...recycleItems,
+        {
+          type: value,
+          quantity: 1,
+          id: null,
+          cycleId: cycleId,
+        },
       ]);
+      setValue(null);
     }
   };
 
-  const handleItemChange = (id: string, field: 'type' | 'count' | 'isOpen', value: ValueType | string | boolean | any) => {
-    setRecycleItems(prevItems => 
-      prevItems.map(item => 
-        item.id === id ? { ...item, [field]: value } : item
-      )
-    );
+  const removeRecycleItem = (index: number) => {
+    const newItems = recycleItems.filter((_, i) => i !== index);
+    setRecycleItems(newItems);
   };
 
-  const renderItems = () => {
-    return recycleItems.map((item) => {
-      return (
-        <View key={item.id} className="flex flex-row justify-between items-center mx-auto pb-4">
-          <DropDownPicker 
-            open={item.isOpen}
-            setOpen={(isOpen) => handleItemChange(item.id, 'isOpen', isOpen)}
-            items={items}
-            value={item.type}
-            setValue={(value) => handleItemChange(item.id, 'type', value)}
-            setItems={setItems}
-            containerStyle={{ width: 150 }}
-            zIndex={5000 - recycleItems.indexOf(item)}
-            zIndexInverse={5000 - recycleItems.indexOf(item)}
-          />
-          <TextInput
-            className="bg-gray-300 rounded-lg p-2 w-20 ml-2"
-            keyboardType="numeric"
-            value={item.count}
-            onChangeText={(value) => handleItemChange(item.id, 'count', value)}
-          />
-        </View>
-      );
-    });
+  const updateQuantity = (index: number, newQuantity: number) => {
+    const newItems = recycleItems.map((item, i) =>
+      i === index ? { ...item, quantity: Math.max(1, newQuantity) } : item,
+    );
+    setRecycleItems(newItems);
+  };
+
+  const onSubmit = async () => {
+    const newCycle = {
+      id: cycleId,
+      userId: user.id,
+      markerId: null,
+      items: recycleItems,
+      createdAt: null,
+    };
+
+    await addNewCycle(newCycle);
+    setModalVisible(false);
   };
 
   return (
     <Modal
       isVisible={isVisible}
       onBackdropPress={() => setModalVisible(false)}
+      className="m-0"
     >
-      <View className="p-4 justify-center items-center w-11/12">
-        <View className="flex-col justify-stretch items-center  bg-white rounded-[25] py-8 px-2 w-11/12">
-          <Text className="text-black font-bold text-2xl">Recycle List</Text>
-          <View className="flex flex-row justify-between items-center">
-            <View className="flex flex-col justify-center items-center">
-              <View className="flex flex-row justify-between items-center mx-auto">
-                <Text className="flex text-black font-semibold text-lg">Item</Text>
-                <Text className="flex text-black font-semibold text-lg">Count:</Text>
-              </View>
-              {renderItems()}
-              <TouchableOpacity onPress={addItem} className="flex flex-row justify-center items-center ">
-                <Ionicons name="add-outline" size={24} color="black" />
+      <View className="bg-white rounded-t-3xl p-6 h-3/4 absolute bottom-0 left-0 right-0">
+        <Text className="text-2xl font-bold mb-4">Recycling Items</Text>
+
+        <View className="flex-row items-center mb-4">
+          <View className="flex-1 mr-2">
+            <DropDownPicker
+              open={open}
+              value={value}
+              items={items}
+              setOpen={setOpen}
+              setValue={setValue}
+              setItems={setItems}
+              placeholder="Select an item"
+            />
+          </View>
+          <TouchableOpacity
+            onPress={addRecycleItem}
+            className="bg-blue-500 px-4 py-2 rounded-lg"
+          >
+            <Text className="text-white font-semibold">Add</Text>
+          </TouchableOpacity>
+        </View>
+
+        {recycleItems.map((item, index) => (
+          <View
+            key={index}
+            className="flex-row items-center justify-between mb-2 bg-gray-100 p-2 rounded-lg"
+          >
+            <View className="flex-row items-center">
+              <Image
+                source={{ uri: "/api/placeholder/50/50" }}
+                className="w-8 h-8 mr-2"
+              />
+              <Text className="font-semibold">{item.type}</Text>
+            </View>
+            <View className="flex-row items-center">
+              <TouchableOpacity
+                onPress={() => updateQuantity(index, item.quantity - 1)}
+                className="bg-gray-300 w-8 h-8 rounded-full items-center justify-center"
+              >
+                <Text className="text-lg font-bold">-</Text>
+              </TouchableOpacity>
+              <Text className="mx-3 font-semibold">{item.quantity}</Text>
+              <TouchableOpacity
+                onPress={() => updateQuantity(index, item.quantity + 1)}
+                className="bg-gray-300 w-8 h-8 rounded-full items-center justify-center"
+              >
+                <Text className="text-lg font-bold">+</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => removeRecycleItem(index)}
+                className="ml-4"
+              >
+                <Text className="text-lg font-bold">x</Text>
               </TouchableOpacity>
             </View>
           </View>
-        </View>
+        ))}
+
+        <TouchableOpacity
+          onPress={() => onSubmit()}
+          className="bg-blue-500 px-4 py-3 rounded-lg mt-4"
+        >
+          <Text className="text-white font-semibold text-center">Submit</Text>
+        </TouchableOpacity>
       </View>
     </Modal>
   );

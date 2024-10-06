@@ -71,7 +71,6 @@ export default function SignInPage() {
           setErrorText("Error updating user: " + updateError.message);
           return;
         }
-
         checkUser = updatedUser?.length ? updatedUser[0] : null;
         console.log("Updated user:", checkUser);
       }
