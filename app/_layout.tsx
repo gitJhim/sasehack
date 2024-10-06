@@ -4,6 +4,7 @@ import { Stack } from "expo-router";
 import { useEffect } from "react";
 import { AppState } from "react-native";
 import { supabase } from "../utils/supabase";
+import { Navigator } from "../components/Navigator";
 import { useUserStore } from "../state/stores/userStore";
 import ErrorBoundary from "react-native-error-boundary";
 
@@ -34,6 +35,7 @@ export default function AppLayout() {
         <Stack>
           <Stack.Screen name="index" options={{ headerShown: false }} />
         </Stack>
+        <Navigator />
       </ErrorBoundary>
     </>
   );

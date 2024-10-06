@@ -5,6 +5,7 @@ export type MapStore = {
   setMarkers: (markers: Marker[]) => void;
 };
 
+// TODO: Add title and save to db
 export type Marker = {
   id: string | null;
   userId: string | null;
