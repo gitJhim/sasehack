@@ -9,7 +9,6 @@ import {
   Image,
 } from "react-native";
 import * as Location from "expo-location";
-import Modal from "react-native-modal";
 import { useMapStore } from "../state/stores/mapStore";
 import { useUserStore } from "../state/stores/userStore";
 import SignInModal from "./SignInModal";
@@ -18,36 +17,7 @@ import AddCycleModal from "./AddCycleModal";
 import AddBinModal from "./AddBinModal";
 import { Marker as MarkerType } from "../types/map.types";
 import uuid from "react-native-uuid";
-
-const CustomCallout = ({
-  marker,
-  onInfoPress,
-  onAddCyclePress,
-}: {
-  marker: MarkerType;
-  onInfoPress: () => void;
-  onAddCyclePress: () => void;
-}) => (
-  <View className="bg-white rounded-lg p-2.5 w-40">
-    <Text className="text-base font-bold mb-1 text-center">
-      Bin {marker.id}
-    </Text>
-    <View className="flex-row justify-around">
-      <TouchableOpacity
-        onPress={onInfoPress}
-        className="bg-[#17A773] px-2.5 py-1.5 rounded"
-      >
-        <Text className="text-white font-bold">Info</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        onPress={onAddCyclePress}
-        className="bg-[#17A773] px-2.5 py-1.5 rounded"
-      >
-        <Text className="text-white font-bold">Add Cycle</Text>
-      </TouchableOpacity>
-    </View>
-  </View>
-);
+import { analyzeImage } from "../utils/ai/analysis";
 
 export default function Map() {
   const markers = useMapStore((state) => state.markers);
@@ -142,6 +112,7 @@ export default function Map() {
         setImageUri(image);
       };
       loadImage();
+      analyzeImage(imageUri);
     }, []);
 
     return (
