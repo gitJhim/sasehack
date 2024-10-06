@@ -1,6 +1,5 @@
 import React, { useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, Animated, Easing } from 'react-native';
-import { User } from '../types/user.types';
 import { useUserStore } from '../state/stores/userStore';
 
 const LevelUpScreen = () => {
