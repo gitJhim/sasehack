@@ -1,5 +1,6 @@
 import { useCycleStore } from "../../state/stores/cycleStore";
 import { Cycle } from "../../types/cycle.types";
+import { LogEventType } from "../../types/user.types";
 import { supabase } from "../supabase";
 
 export const addNewCycle = async (cycle: Cycle) => {
@@ -29,6 +30,21 @@ export const addNewCycle = async (cycle: Cycle) => {
       console.error("Error adding cycle item:", error.message);
       return { data: null, error };
     }
+  }
+
+  const { data: logData, error: logError } = await supabase
+    .from("logs")
+    .insert([
+      {
+        user_id: cycle.userId,
+        data_id: cycle.id,
+        type: LogEventType.NEW_CYCLE,
+      },
+    ]);
+
+  if (logError) {
+    console.error("Error adding log:", logError.message);
+    return { data: null, error };
   }
 
   if (error) {

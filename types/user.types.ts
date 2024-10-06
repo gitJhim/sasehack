@@ -19,3 +19,16 @@ export type User = {
   level: number | null;
   xp: number | null;
 };
+
+export type Event = {
+  id: string | null;
+  userId: string | null;
+  dataId: string | null;
+  type: LogEventType;
+  createdAt: string | null;
+};
+
+export enum LogEventType {
+  NEW_CYCLE = "NEW_CYCLE",
+  NEW_MARKER = "NEW_MARKER",
+}
