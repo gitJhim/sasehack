@@ -1,4 +1,4 @@
-import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
+import MapView, { Callout, Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import { useState, useEffect, useRef } from "react";
 import {
   View,
@@ -16,14 +16,34 @@ import SignInModal from "./SignInModal";
 import { addNewMarker, getMarkers } from "../utils/db/map";
 import AddCycleModal from "./AddCycleModal";
 import AddBinModal from "./AddBinModal";
+import { Marker as MarkerType } from "../types/map.types";
+
+const CustomCallout = ({
+  marker,
+  onInfoPress,
+  onAddCyclePress} :
+{
+  marker: MarkerType;
+  onInfoPress: () => void;
+  onAddCyclePress: () => void;
+}) => (
+  <View className="bg-white rounded-lg p-2.5 w-40">
+    <Text className="text-base font-bold mb-1 text-center">Bin {marker.id}</Text>
+    <View className="flex-row justify-around">
+      <TouchableOpacity onPress={onInfoPress} className="bg-[#17A773] px-2.5 py-1.5 rounded">
+        <Text className="text-white font-bold">Info</Text>
+      </TouchableOpacity>
+      <TouchableOpacity onPress={onAddCyclePress} className="bg-[#17A773] px-2.5 py-1.5 rounded">
+        <Text className="text-white font-bold">Add Cycle</Text>
+      </TouchableOpacity>
+    </View>
+  </View>
+);
 
 export default function Map() {
   const markers = useMapStore((state) => state.markers);
   const setMarkers = useMapStore((state) => state.setMarkers);
   const user = useUserStore((state) => state.user);
-
-
-  
   const initialLocation = {
     latitude: 37.78825,
     longitude: -122.4324,
@@ -40,6 +60,7 @@ export default function Map() {
   const [signInModalVisible, setSignInModalVisible] = useState(false);
   const [recycleModalVisible, setRecycleModalVisible] = useState(false);
   const [addBinModalVisible, setAddBinModalVisible] = useState(false);
+  const [selectedMarker, setSelectedMarker] = useState<string | null>(null);
 
   const getCurrentLocation = async () => {
     let { status } = await Location.requestForegroundPermissionsAsync();
@@ -95,31 +116,31 @@ export default function Map() {
   };
 
   const renderMarkers = () => {
-    return markers.map((marker) => {
-      return marker.latitude === myLocation.latitude &&
-        marker.longitude === myLocation.longitude ? (
-        <Marker
-          key={marker.id}
-          coordinate={{
-            latitude: marker.latitude,
-            longitude: marker.longitude + 0.0002,
-          }}
-          title={`Bin ${marker.id}`}
-          image={require("../assets/marker.png")}
-        />
-      ) : (
-        <Marker
-          key={marker.id}
-          // get the marker's coordinate from the marker object
-          coordinate={{
-            latitude: marker.latitude,
-            longitude: marker.longitude,
-          }}
-          title={`Bin ${marker.id}`}
-          image={require("../assets/marker.png")}
-        />
-      );
-    });
+    return markers.map((marker) => (
+      <Marker
+        key={marker.id}
+        coordinate={{
+          latitude: marker.latitude,
+          longitude: marker.longitude,
+        }}
+        image={require("../assets/marker.png")}
+        onPress={() => setSelectedMarker(marker.id)}
+        onDeselect={() => setSelectedMarker(null)}
+      >
+        <Callout onPress={() => setRecycleModalVisible(true)}>
+          <View className="bg-white rounded-xl p-4 w-64 justify-center">
+            <Text className="text-xl font-bold mb-2 text-center">Bin</Text>
+            <Text className="text-md font-bold mb-2 text-left">Estimated Capacity: </Text>
+            <Text className="text-md font-bold mb-2 text-left">No. items recycles: </Text>
+            <Text className="text-md font-bold mb-2 text-left">Estimated weight recycled: </Text>
+            <Text className="text-md font-bold mb-2 text-left">No. people recycled: </Text>
+            <TouchableOpacity className="bg-[#17A773] py-2 px-4 rounded-xl">
+              <Text className="text-white font-semibold text-center">Recycle Now</Text>
+            </TouchableOpacity>
+          </View>
+        </Callout>
+      </Marker>
+    ));
   };
 
   return (
