@@ -14,11 +14,11 @@ export default function XpBar() {
     );
   }
 
-  const xpNeeded = XpToLevel({ level: user.level, xp: user.xp });
+  const xpNeeded = XpToLevel(user);
   const progress = user.xp / xpNeeded;
 
   return (
-    <View className="p-4 flex-1 justify-center items-center">
+    <View className="p-4 flex-row justify-evenly items-center">
       <View className="flex-row p-2 h-12 w-40 rounded-full items-center bg-[#B1ECC8]">
         <Image
           source={require("../assets/kid_star.png")}
@@ -31,12 +31,12 @@ export default function XpBar() {
           Level: {user.level}
         </Text>
       </View>
-      <View className="mt-4">
-        <Progress.Bar progress={progress} width={200} color="#B1ECC8" />
+      <View className="mt-4 justify-evenly items-center align-middle">
+        <Text className="font-semibold">
+          {user.xp} / {xpNeeded}
+        </Text>
+        <Progress.Bar progress={progress} width={150} color="#B1ECC8" />
       </View>
-      <Text className="font-semibold">
-        XP: {user.xp} / {xpNeeded}
-      </Text>
     </View>
   );
 }

@@ -58,3 +58,21 @@ export const loadUserMarkers = async (userId: string) => {
   console.log("User markers: ", data);
   return { data: data as Marker[], error };
 };
+
+export const uploadMarkerImage = async (markerId: string, path: string) => {
+  const { data, error } = await supabase.storage
+    .from("bin-photos")
+    .upload(markerId + ".jpeg", path, {
+      cacheControl: "3600",
+      upsert: false,
+    });
+
+  if (error) {
+    console.error("Error uploading marker image:", error.message);
+    return { data: null, error };
+  }
+
+  console.log("Uploaded marker image:", data);
+
+  return { data, error };
+};

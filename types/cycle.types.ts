@@ -3,7 +3,7 @@ export type Cycle = {
   userId: string | null;
   markerId: string | null;
   items: CycleItem[];
-  createdAt: string | null;
+  created_at: string | null;
 };
 
 export type CycleItem = {
@@ -13,7 +13,14 @@ export type CycleItem = {
   quantity: number;
 };
 
-export type CycleItemType = "Bottle" | "Bag" | "Can";
+export type CycleItemType =
+  | "plastic bottle"
+  | "cardboard box"
+  | "aluminum can"
+  | "glass bottle"
+  | "plastic bag"
+  | "soda can"
+  | "paper cup";
 
 export type CycleStore = {
   cycles: Cycle[];

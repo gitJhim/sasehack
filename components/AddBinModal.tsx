@@ -1,9 +1,9 @@
-import { useState } from "react";
-import { Text, TextInput, TouchableOpacity, View } from "react-native";
+import { useRef, useState } from "react";
+import { Text, TextInput, TouchableOpacity, View, Image } from "react-native";
 import Modal from "react-native-modal";
-import { useMapStore } from "../state/stores/mapStore";
 import { useUserStore } from "../state/stores/userStore";
-import { addNewMarker } from "../utils/db/map";
+import { addNewMarker, uploadMarkerImage } from "../utils/db/map";
+import * as ImagePicker from "expo-image-picker";
 
 export default function AddBinModal({
   isVisible,
@@ -17,10 +17,11 @@ export default function AddBinModal({
   longitude: number;
 }) {
   const [markerName, setMarkerName] = useState("");
-  const [fullness, setFullness] = useState("empty");
+
+  const [image, setImage] = useState(null);
   const user = useUserStore((state) => state.user);
-  const options = ["Empty", "Half full", "Full"];
-  const onSubmit = () => {
+
+  const onSubmit = async () => {
     if (!user) {
       return;
     }
@@ -32,49 +33,103 @@ export default function AddBinModal({
       longitude: longitude,
       createdAt: null,
     };
-    addNewMarker(newMarker);
+
+    const { data, error } = await addNewMarker(newMarker);
+    if (!image) {
+      console.log("No image");
+      return;
+    }
+    console.log("Image:", image);
+    await uploadMarkerImage(data?.id, image);
     setModalVisible(false);
   };
 
+  const pickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      setImage(result.assets[0].uri);
+    }
+  };
+
+  const takePhoto = async () => {
+    let result = await ImagePicker.launchCameraAsync({
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      setImage(result.assets[0].uri);
+    }
+  };
+
   return (
-    <Modal isVisible={isVisible} onBackdropPress={() => setModalVisible(false)}>
-      <View className="p-4 w-full flex-col bg-white rounded-[25] py-8 px-5 h-4/5 justify-evenly">
-        <View>
-          <Text className="text-black font-semibold text-2xl pb-2">
-            New Bin Name
-          </Text>
-          <TextInput
-            className="bg-gray-300 rounded-lg p-2 w-full mb-5"
-            placeholder="Marker Name"
-            onChangeText={(text) => setMarkerName(text)}
-          />
+    <Modal
+      isVisible={isVisible}
+      onBackdropPress={() => setModalVisible(false)}
+      className="flex items-center justify-center"
+    >
+      <View className="w-11/12 bg-white rounded-3xl p-6 max-h-[90%]">
+        <Text className="text-green-800 font-bold text-2xl mb-4">New Bin</Text>
+
+        <TextInput
+          className="bg-green-100 rounded-lg p-3 mb-4"
+          placeholder="Bin Name"
+          value={markerName}
+          onChangeText={setMarkerName}
+        />
+
+        <View className="mb-4">
+          <TouchableOpacity
+            onPress={takePhoto}
+            className="bg-green-600 py-3 px-4 rounded-lg mb-2"
+          >
+            <Text className="text-white font-semibold text-center">
+              Take Photo
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={pickImage}
+            className="bg-green-500 py-3 px-4 rounded-lg mb-2"
+          >
+            <Text className="text-white font-semibold text-center">
+              Choose from Gallery
+            </Text>
+          </TouchableOpacity>
+
+          {image && (
+            <View className="mt-2">
+              <Image
+                source={{ uri: image }}
+                style={{ width: "100%", height: 200, borderRadius: 10 }}
+                resizeMode="cover"
+              />
+              <Text className="text-center mt-1 text-green-600">
+                Photo Preview
+              </Text>
+            </View>
+          )}
         </View>
-        <View>
-          <Text className="text-black font-semibold text-2xl pb-2">
-            How full is it?
-          </Text>
-          {options.map((option) => (
-            <TouchableOpacity
-              key={option}
-              onPress={() => setFullness(option)}
-              className={`${option === fullness ? "bg-[#17A773] text-white" : "bg-gray-300 text-black"} rounded-lg p-2 w-full mb-5`}
-            >
-              <Text className="text-black font-semibold text-lg">{option}</Text>
-            </TouchableOpacity>
-          ))}
-        </View>
-        <View className="flex flex-row justify-evenly items-center">
+
+        <View className="flex-row justify-evenly">
           <TouchableOpacity
             onPress={onSubmit}
-            className="bg-[#17A773] py-4 px-8 rounded-full"
+            className="bg-green-600 py-3 px-6 rounded-full"
           >
-            <Text className="text-white font-semibold text-xl">Create</Text>
+            <Text className="text-white font-semibold text-lg">Create</Text>
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => setModalVisible(false)}
-            className="bg-gray-300 py-4 px-8 rounded-full"
+            className="bg-gray-300 py-3 px-6 rounded-full"
           >
-            <Text className="text-white font-semibold text-xl">Close</Text>
+            <Text className="text-gray-700 font-semibold text-lg">Close</Text>
           </TouchableOpacity>
         </View>
       </View>

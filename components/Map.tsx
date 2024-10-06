@@ -17,6 +17,8 @@ import { getMarkers } from "../utils/db/map";
 import AddCycleModal from "./AddCycleModal";
 import AddBinModal from "./AddBinModal";
 import { router } from "expo-router";
+import { Marker as MarkerType } from "../types/map.types";
+import uuid from "react-native-uuid";
 
 export default function Map() {
   const markers = useMapStore((state) => state.markers);
@@ -84,14 +86,6 @@ export default function Map() {
     setAddBinModalVisible(true);
   };
 
-  const onAddRecycle = async () => {
-    if (!user) {
-      setSignInModalVisible(true);
-      return;
-    }
-    setRecycleModalVisible(true);
-  };
-
   const renderMarkers = () => {
     return markers.map((marker) => (
       <Marker
@@ -105,12 +99,22 @@ export default function Map() {
         <Callout onPress={() => setRecycleModalVisible(true)}>
           <View className="bg-white rounded-xl p-4 w-64 justify-center">
             <Text className="text-xl font-bold mb-2 text-center">Bin</Text>
-            <Text className="text-md font-bold mb-2 text-left">Estimated Capacity: </Text>
-            <Text className="text-md font-bold mb-2 text-left">No. items recycles: </Text>
-            <Text className="text-md font-bold mb-2 text-left">Estimated weight recycled: </Text>
-            <Text className="text-md font-bold mb-2 text-left">No. people recycled: </Text>
+            <Text className="text-md font-bold mb-2 text-left">
+              Estimated Capacity:{" "}
+            </Text>
+            <Text className="text-md font-bold mb-2 text-left">
+              No. items recycles:{" "}
+            </Text>
+            <Text className="text-md font-bold mb-2 text-left">
+              Estimated weight recycled:{" "}
+            </Text>
+            <Text className="text-md font-bold mb-2 text-left">
+              No. people recycled:{" "}
+            </Text>
             <TouchableOpacity className="bg-[#17A773] py-2 px-4 rounded-xl">
-              <Text className="text-white font-semibold text-center">Recycle Now</Text>
+              <Text className="text-white font-semibold text-center">
+                Recycle Now
+              </Text>
             </TouchableOpacity>
           </View>
         </Callout>
@@ -127,7 +131,8 @@ export default function Map() {
       <AddCycleModal
         isVisible={recycleModalVisible}
         setModalVisible={setRecycleModalVisible}
-        cycleId={"af51bef3-c370-4e57-b769-70794e848492"}
+        markerId={selectedMarker}
+        cycleId={uuid.v4().toString()}
       />
       {myLocation && (
       <AddBinModal
@@ -182,10 +187,7 @@ export default function Map() {
           style={{ width: 40, height: 40 }}
         />
       </TouchableOpacity>
-      <TouchableOpacity
-        onPress={() => setModalVisible(true)}
-        style={styles.addButton}
-      >
+      <TouchableOpacity onPress={() => onAddMarker()} style={styles.addButton}>
         <Image
           source={require("../assets/add_2.png")}
           style={{ width: 40, height: 40 }}
