@@ -1,5 +1,6 @@
 import { ScrollView, Text, View, Image } from "react-native";
 import { useUserStore } from "../state/stores/userStore";
+import RecycleChart from "../components/RecycleChart";
 
 const Profile = () => {
   const user = useUserStore((state) => state.user);
@@ -30,6 +31,7 @@ const Profile = () => {
             @{user?.name}
           </Text>
         </View>
+        <RecycleChart />
       </ScrollView>
     </View>
   );
