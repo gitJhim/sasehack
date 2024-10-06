@@ -18,7 +18,7 @@ export default function AddBinModal({
 }) {
   const [markerName, setMarkerName] = useState("");
 
-  const [image, setImage] = useState(null);
+  const [image, setImage] = useState<ImagePicker.ImagePickerAsset>();
   const user = useUserStore((state) => state.user);
 
   const onSubmit = async () => {
@@ -35,12 +35,7 @@ export default function AddBinModal({
     };
 
     const { data, error } = await addNewMarker(newMarker);
-    if (!image) {
-      console.log("No image");
-      return;
-    }
-    console.log("Image:", image);
-    await uploadMarkerImage(data?.id, image);
+    await uploadMarkerImage(data?.id, image.uri);
     setModalVisible(false);
   };
 
@@ -53,7 +48,7 @@ export default function AddBinModal({
     });
 
     if (!result.canceled) {
-      setImage(result.assets[0].uri);
+      setImage(result.assets[0]);
     }
   };
 
@@ -65,7 +60,7 @@ export default function AddBinModal({
     });
 
     if (!result.canceled) {
-      setImage(result.assets[0].uri);
+      setImage(result.assets[0]);
     }
   };
 
@@ -107,7 +102,7 @@ export default function AddBinModal({
           {image && (
             <View className="mt-2">
               <Image
-                source={{ uri: image }}
+                source={{ uri: image.uri }}
                 style={{ width: "100%", height: 200, borderRadius: 10 }}
                 resizeMode="cover"
               />

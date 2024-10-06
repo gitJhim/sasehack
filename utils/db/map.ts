@@ -3,7 +3,8 @@ import { supabase } from "../supabase";
 import { useMapStore } from "../../state/stores/mapStore";
 import { LogEventType } from "../../types/user.types";
 import { useUserStore } from "../../state/stores/userStore";
-
+import * as FileSystem from "expo-file-system";
+import { decode } from "base64-arraybuffer";
 export const addNewMarker = async (marker: Marker) => {
   const { data, error } = await supabase
     .from("markers")
@@ -60,11 +61,14 @@ export const loadUserMarkers = async (userId: string) => {
 };
 
 export const uploadMarkerImage = async (markerId: string, path: string) => {
+  const base64 = await FileSystem.readAsStringAsync(path, {
+    encoding: FileSystem.EncodingType.Base64,
+  });
+
   const { data, error } = await supabase.storage
     .from("bin-photos")
-    .upload(markerId + ".jpeg", path, {
-      cacheControl: "3600",
-      upsert: false,
+    .upload(markerId + ".png", decode(base64), {
+      contentType: "image/png",
     });
 
   if (error) {
@@ -75,4 +79,12 @@ export const uploadMarkerImage = async (markerId: string, path: string) => {
   console.log("Uploaded marker image:", data);
 
   return { data, error };
+};
+
+export const getMarkerPhoto = async (markerId: string) => {
+  const { data } = supabase.storage
+    .from("bin-photos")
+    .getPublicUrl(markerId + ".png");
+
+  return data.publicUrl;
 };
