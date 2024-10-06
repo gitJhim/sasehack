@@ -22,6 +22,8 @@ export default function Map() {
   const setMarkers = useMapStore((state) => state.setMarkers);
   const user = useUserStore((state) => state.user);
 
+
+  
   const initialLocation = {
     latitude: 37.78825,
     longitude: -122.4324,
