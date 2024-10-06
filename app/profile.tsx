@@ -12,8 +12,8 @@ const Profile = () => {
           paddingBottom: 150,
         }}
       >
-        <View className="h-1/4 bg-[#17A773] items-center justify-end pb-12 pt-4"></View>
-        <View className="flex-1 bg-backgroundLight dark:bg-backgroundDark bg-opacity-10 items-center pt-16 min-h-screen">
+        <View className="h-1/4 bg-[#17A773] items-center justify-end pb-48 pt-4"></View>
+        <View className="flex-1 bg-backgroundLight dark:bg-backgroundDark bg-opacity-10 items-center pt-16">
           <Image
             source={{ uri: user?.avatar_url || "" }}
             style={{
@@ -38,4 +38,3 @@ const Profile = () => {
 };
 
 export default Profile;
-

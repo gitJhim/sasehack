@@ -1,5 +1,5 @@
 import { ContributionGraph } from "react-native-chart-kit";
-import { View } from "react-native";
+import { Dimensions, View } from "react-native";
 
 const RecycleChart = () => {
   const chartConfig = {
@@ -7,45 +7,39 @@ const RecycleChart = () => {
     backgroundGradientFromOpacity: 0,
     backgroundGradientTo: "transparent",
     backgroundGradientToOpacity: 0,
-    color: (opacity = 1) => `rgba(127, 57, 230, ${opacity})`,
-    strokeWidth: 2, // optional, default 3
-    barPercentage: 0.5,
+    color: (opacity = 1) => `rgba(47, 152, 74, ${opacity})`,
+    labelColor: () => "#000000",
+    strokeWidth: 3, // optional, default 3
   };
+
+  const screenWidth = Dimensions.get("screen").width;
 
   const tootltipDataAttrs: any = {};
 
   const chartData = () => {
     const data = [
-      { date: "2017-01-02", count: 1 },
-      { date: "2017-01-03", count: 2 },
-      { date: "2017-01-04", count: 3 },
-      { date: "2017-01-05", count: 4 },
-      { date: "2017-01-06", count: 5 },
-      { date: "2017-01-30", count: 2 },
-      { date: "2017-01-31", count: 3 },
-      { date: "2017-03-01", count: 2 },
-      { date: "2017-04-02", count: 4 },
-      { date: "2017-03-05", count: 2 },
-      { date: "2017-02-30", count: 4 },
+      { date: "2024-10-05", count: 2 },
+      { date: "2024-09-05", count: 0 },
+      { date: "2024-08-05", count: 1 },
+      { date: "2024-09-15", count: 4 },
+      { date: "2024-08-15", count: 3 },
+      { date: "2024-10-15", count: 2 },
     ];
     return data;
   };
 
   return (
-    <View className="mx-6 justify-center">
+    <View className=" flex-1 items-center justify-center">
       <ContributionGraph
         values={chartData()}
         endDate={new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000)}
         numDays={90}
-        width={350}
+        width={screenWidth}
         height={220}
         chartConfig={chartConfig}
-        showOutOfRangeDays={true}
-        onDayPress={(date) => {
-          console.log(date);
-        }}
-        showMonthLabels={false}
+        showMonthLabels={true}
         tooltipDataAttrs={(_) => tootltipDataAttrs}
+        gutterSize={5}
       />
     </View>
   );
