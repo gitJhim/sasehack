@@ -55,6 +55,7 @@ export default function AddBinModal({
           </Text>
           {options.map((option) => (
             <TouchableOpacity
+              key={option}
               onPress={() => setFullness(option)}
               className={`${option === fullness ? "bg-[#17A773] text-white" : "bg-gray-300 text-black"} rounded-lg p-2 w-full mb-5`}
             >
@@ -80,4 +81,3 @@ export default function AddBinModal({
     </Modal>
   );
 }
-

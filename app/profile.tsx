@@ -1,6 +1,7 @@
 import { ScrollView, Text, View, Image } from "react-native";
 import { useUserStore } from "../state/stores/userStore";
 import RecycleChart from "../components/RecycleChart";
+import XpBar from "../components/XpBar";
 
 const Profile = () => {
   const user = useUserStore((state) => state.user);
@@ -27,9 +28,10 @@ const Profile = () => {
             }}
             className="bg-white"
           />
-          <Text className="text-black dark:text-white text-xl">
-            @{user?.name}
-          </Text>
+          <Text className="text-black text-xl">@{user?.name}</Text>
+        </View>
+        <View className="flex-1 justify-center items-center">
+          <XpBar />
         </View>
         <RecycleChart />
       </ScrollView>

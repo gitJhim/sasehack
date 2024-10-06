@@ -7,6 +7,7 @@ import { supabase } from "../utils/supabase";
 import { Navigator } from "../components/Navigator";
 import { useUserStore } from "../state/stores/userStore";
 import ErrorBoundary from "react-native-error-boundary";
+import { checkAndUpdateUser } from "../utils/db/auth";
 
 AppState.addEventListener("change", (state) => {
   if (state === "active") {
@@ -22,10 +23,12 @@ export default function AppLayout() {
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
+      checkAndUpdateUser(session);
     });
 
     supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
+      checkAndUpdateUser(session);
     });
   }, []);
 
