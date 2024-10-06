@@ -111,11 +111,11 @@ const Ranking = () => {
   };
 
   return (
-    <View className="bg-gray-200 h-full">
+    <View className="flex-1 bg-gray-100">
       <TopBar />
-      <View className="flex-col items-center">
+      <View className="flex-1 items-center">
         <Text className="text-4xl font-bold p-4">Rankings</Text>
-        <View className="flex-row justify-evenly bg-[#a5e5bd] w-11/12 p-5 rounded-t-3xl">
+        <View className="flex-row w-11/12 mb-[-1px]">
           {categories.map((category) => (
             <Pressable
               key={category}
@@ -126,7 +126,15 @@ const Ranking = () => {
                   : " text-black"
               } rounded-lg py-2 px-4`}
             >
-              <Text className="font-semibold text-lg">{category}</Text>
+              <Text
+                className={`text-center ${
+                  selectedCategory === category
+                    ? "text-white font-semibold"
+                    : "text-gray-700"
+                }`}
+              >
+                {category}
+              </Text>
             </Pressable>
           ))}
         </View>
