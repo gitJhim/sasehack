@@ -15,6 +15,7 @@ import { useUserStore } from "../state/stores/userStore";
 import SignInModal from "./SignInModal";
 import { addNewMarker, getMarkers } from "../utils/db/map";
 import AddCycleModal from "./AddCycleModal";
+import AddBinModal from "./AddBinModal";
 
 export default function Map() {
   const markers = useMapStore((state) => state.markers);
@@ -36,6 +37,7 @@ export default function Map() {
   const [modalVisible, setModalVisible] = useState(false);
   const [signInModalVisible, setSignInModalVisible] = useState(false);
   const [recycleModalVisible, setRecycleModalVisible] = useState(false);
+  const [addBinModalVisible, setAddBinModalVisible] = useState(false);
 
   const getCurrentLocation = async () => {
     let { status } = await Location.requestForegroundPermissionsAsync();
@@ -79,15 +81,7 @@ export default function Map() {
       setSignInModalVisible(true);
       return;
     }
-
-    let newMarker = {
-      id: null,
-      userId: user.id,
-      latitude: myLocation.latitude,
-      longitude: myLocation.longitude,
-    };
-
-    await addNewMarker(newMarker);
+    setAddBinModalVisible(true);
   };
 
   const onAddRecycle = async () => {
@@ -136,6 +130,12 @@ export default function Map() {
         isVisible={recycleModalVisible}
         setModalVisible={setRecycleModalVisible}
       />
+      <AddBinModal
+        isVisible={addBinModalVisible}
+        setModalVisible={setAddBinModalVisible}
+        latitude={myLocation.latitude}
+        longitude={myLocation.longitude}
+      />
       <Modal
         isVisible={modalVisible}
         onBackdropPress={() => setModalVisible(false)}
@@ -167,10 +167,10 @@ export default function Map() {
         <Marker coordinate={myLocation} title="My Location" />
         {renderMarkers()}
       </MapView>
-      <TouchableOpacity onPress={goToCurrentLocation} className="bg-gray-300 rounded-3xl p-4 absolute bottom-[25%] right-5">
+      <TouchableOpacity onPress={goToCurrentLocation} style={styles.relocateButton}>
           <Image source={require('../assets/self.png')} style={{ width: 40, height: 40 }} />
       </TouchableOpacity>
-      <TouchableOpacity onPress={() => setModalVisible(true)} className="bg-[#17A773] p-4 rounded-3xl absolute bottom-[15%] right-5">
+      <TouchableOpacity onPress={() => setModalVisible(true)} style={styles.addButton}>
           <Image source={require('../assets/add_2.png')} style={{ width: 40, height: 40 }} />
       </TouchableOpacity>
     </View>
@@ -187,5 +187,21 @@ const styles = StyleSheet.create({
   map: {
     width: Dimensions.get("window").width,
     height: Dimensions.get("window").height,
+  },
+  addButton: {
+    position: 'absolute',
+    bottom: Dimensions.get('window').height * 0.15,
+    right: Dimensions.get('window').width * 0.05,
+    backgroundColor: '#17A773',
+    padding: 16,
+    borderRadius: 24,
+  },
+  relocateButton: {
+    position: 'absolute',
+    bottom: Dimensions.get('window').height * 0.25,
+    right: Dimensions.get('window').width * 0.05,
+    backgroundColor: '#e2e8f0',
+    padding: 16,
+    borderRadius: 24,
   },
 });
