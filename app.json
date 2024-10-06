@@ -26,7 +26,8 @@
         "googleMaps": {
           "apiKey": "AIzaSyCofnaduYh7txdrqbEhz1PgXFeA4p85W08"
         }
-      }
+      },
+      "permissions": ["CAMERA", "RECORD_AUDIO"]
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -37,6 +38,14 @@
       }
     },
     "plugins": [
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera",
+          "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone",
+          "recordAudioAndroid": true
+        }
+      ],
       "expo-router",
       [
         "@react-native-google-signin/google-signin",
@@ -47,4 +56,3 @@
     ]
   }
 }
-
