@@ -21,19 +21,27 @@ import { Marker as MarkerType } from "../types/map.types";
 const CustomCallout = ({
   marker,
   onInfoPress,
-  onAddCyclePress} :
-{
+  onAddCyclePress,
+}: {
   marker: MarkerType;
   onInfoPress: () => void;
   onAddCyclePress: () => void;
 }) => (
   <View className="bg-white rounded-lg p-2.5 w-40">
-    <Text className="text-base font-bold mb-1 text-center">Bin {marker.id}</Text>
+    <Text className="text-base font-bold mb-1 text-center">
+      Bin {marker.id}
+    </Text>
     <View className="flex-row justify-around">
-      <TouchableOpacity onPress={onInfoPress} className="bg-[#17A773] px-2.5 py-1.5 rounded">
+      <TouchableOpacity
+        onPress={onInfoPress}
+        className="bg-[#17A773] px-2.5 py-1.5 rounded"
+      >
         <Text className="text-white font-bold">Info</Text>
       </TouchableOpacity>
-      <TouchableOpacity onPress={onAddCyclePress} className="bg-[#17A773] px-2.5 py-1.5 rounded">
+      <TouchableOpacity
+        onPress={onAddCyclePress}
+        className="bg-[#17A773] px-2.5 py-1.5 rounded"
+      >
         <Text className="text-white font-bold">Add Cycle</Text>
       </TouchableOpacity>
     </View>
@@ -108,14 +116,6 @@ export default function Map() {
     setAddBinModalVisible(true);
   };
 
-  const onAddRecycle = async () => {
-    if (!user) {
-      setSignInModalVisible(true);
-      return;
-    }
-    setRecycleModalVisible(true);
-  };
-
   const renderMarkers = () => {
     return markers.map((marker) => (
       <Marker
@@ -131,12 +131,22 @@ export default function Map() {
         <Callout onPress={() => setRecycleModalVisible(true)}>
           <View className="bg-white rounded-xl p-4 w-64 justify-center">
             <Text className="text-xl font-bold mb-2 text-center">Bin</Text>
-            <Text className="text-md font-bold mb-2 text-left">Estimated Capacity: </Text>
-            <Text className="text-md font-bold mb-2 text-left">No. items recycles: </Text>
-            <Text className="text-md font-bold mb-2 text-left">Estimated weight recycled: </Text>
-            <Text className="text-md font-bold mb-2 text-left">No. people recycled: </Text>
+            <Text className="text-md font-bold mb-2 text-left">
+              Estimated Capacity:{" "}
+            </Text>
+            <Text className="text-md font-bold mb-2 text-left">
+              No. items recycles:{" "}
+            </Text>
+            <Text className="text-md font-bold mb-2 text-left">
+              Estimated weight recycled:{" "}
+            </Text>
+            <Text className="text-md font-bold mb-2 text-left">
+              No. people recycled:{" "}
+            </Text>
             <TouchableOpacity className="bg-[#17A773] py-2 px-4 rounded-xl">
-              <Text className="text-white font-semibold text-center">Recycle Now</Text>
+              <Text className="text-white font-semibold text-center">
+                Recycle Now
+              </Text>
             </TouchableOpacity>
           </View>
         </Callout>
@@ -161,27 +171,6 @@ export default function Map() {
         latitude={myLocation.latitude}
         longitude={myLocation.longitude}
       />
-      <Modal
-        isVisible={modalVisible}
-        onBackdropPress={() => setModalVisible(false)}
-      >
-        <View className="p-4 justify-center items-center">
-          <View className="flex-col justify-stretch items-center bg-white rounded-3xl w-6/12 py-8 px-4">
-            <TouchableOpacity
-              onPress={onAddMarker}
-              className="bg-[#17A773] py-2 px-4 rounded-[15] mb-5"
-            >
-              <Text className="text-white font-semibold">Add Bin</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={onAddRecycle}
-              className="bg-[#17A773] py-2 px-4 rounded-[15]"
-            >
-              <Text className="text-white font-semibold">Add Recycle</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
       <MapView
         style={styles.map}
         region={region}
@@ -202,10 +191,7 @@ export default function Map() {
           style={{ width: 40, height: 40 }}
         />
       </TouchableOpacity>
-      <TouchableOpacity
-        onPress={() => setModalVisible(true)}
-        style={styles.addButton}
-      >
+      <TouchableOpacity onPress={() => onAddMarker()} style={styles.addButton}>
         <Image
           source={require("../assets/add_2.png")}
           style={{ width: 40, height: 40 }}
