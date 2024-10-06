@@ -1,10 +1,11 @@
-import { Text, TouchableOpacity, View, Image } from "react-native";
+import { Text, TouchableOpacity, View, Image, ScrollView } from "react-native";
 import Modal from "react-native-modal";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import DropDownPicker from "react-native-dropdown-picker";
 import { CycleItem } from "../types/cycle.types";
 import { useUserStore } from "../state/stores/userStore";
 import { addNewCycle } from "../utils/db/cycle";
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 
 export default function AddCycleModal({
   isVisible,
@@ -87,83 +88,140 @@ export default function AddCycleModal({
       userId: user.id,
       markerId: null,
       items: recycleItems,
-      createdAt: null,
+      created_at: null,
     };
 
     await addNewCycle(newCycle);
     setModalVisible(false);
   };
 
+  useEffect(() => {
+    if (value) {
+      addRecycleItem();
+    }
+  }, [value]);
+
   return (
     <Modal
       isVisible={isVisible}
       onBackdropPress={() => setModalVisible(false)}
-      className="m-0"
+      backdropTransitionOutTiming={0}
+      style={{ margin: 0 }}
+      animationIn="slideInUp"
+      animationOut="slideOutDown"
     >
-      <View className="bg-white rounded-t-3xl p-6 h-3/4 absolute bottom-0 left-0 right-0">
-        <Text className="text-2xl font-bold mb-4">Recycling Items</Text>
-
-        <View className="flex-row items-center mb-4">
-          <View className="flex-1 mr-2">
-            <DropDownPicker
-              open={open}
-              value={value}
-              items={items}
-              setOpen={setOpen}
-              setValue={setValue}
-              setItems={setItems}
-              placeholder="Select an item"
-            />
-          </View>
-          <TouchableOpacity
-            onPress={addRecycleItem}
-            className="bg-blue-500 px-4 py-2 rounded-lg"
-          >
-            <Text className="text-white font-semibold">Add</Text>
+      <View className="bg-white rounded-t-3xl p-6 h-5/6 absolute bottom-0 left-0 right-0 shadow-lg">
+        <View className="flex-row justify-between items-center mb-6">
+          <Text className="text-2xl font-bold text-green-800">
+            Recycling Items
+          </Text>
+          <TouchableOpacity onPress={() => setModalVisible(false)}>
+            <MaterialCommunityIcons name="close" size={24} color="#4CAF50" />
           </TouchableOpacity>
         </View>
 
-        {recycleItems.map((item, index) => (
-          <View
-            key={index}
-            className="flex-row items-center justify-between mb-2 bg-gray-100 p-2 rounded-lg"
-          >
-            <View className="flex-row items-center">
-              <Image
-                source={{ uri: "/api/placeholder/50/50" }}
-                className="w-8 h-8 mr-2"
+        <View className="mb-6">
+          <DropDownPicker
+            open={open}
+            value={value}
+            items={items}
+            setOpen={setOpen}
+            setValue={setValue}
+            setItems={setItems}
+            placeholder="Select an item"
+            style={{
+              borderRadius: 12,
+              borderColor: "#4CAF50",
+              minHeight: 50,
+              backgroundColor: "#F1F8E9",
+            }}
+            dropDownContainerStyle={{
+              borderColor: "#4CAF50",
+              backgroundColor: "#F1F8E9",
+            }}
+            textStyle={{ fontSize: 16, fontWeight: "600", color: "#2E7D32" }}
+            placeholderStyle={{ color: "#7CB342" }}
+            ArrowUpIconComponent={({ style }) => (
+              <MaterialCommunityIcons
+                name="chevron-up"
+                size={24}
+                color="#4CAF50"
               />
-              <Text className="font-semibold">{item.type}</Text>
+            )}
+            ArrowDownIconComponent={({ style }) => (
+              <MaterialCommunityIcons
+                name="chevron-down"
+                size={24}
+                color="#4CAF50"
+              />
+            )}
+          />
+        </View>
+
+        <ScrollView className="flex-grow mb-4">
+          {recycleItems.map((item, index) => (
+            <View
+              key={index}
+              className="flex-row items-center justify-between mb-4 bg-green-50 p-4 rounded-xl shadow-sm"
+            >
+              <View className="flex-row items-center flex-1">
+                <View className="w-12 h-12 bg-green-200 rounded-full items-center justify-center mr-4">
+                  <MaterialCommunityIcons
+                    name="recycle"
+                    size={24}
+                    color="#4CAF50"
+                  />
+                </View>
+                <Text className="font-semibold text-lg text-green-800 flex-1">
+                  {item.type}
+                </Text>
+              </View>
+              <View className="flex-row items-center">
+                <TouchableOpacity
+                  onPress={() => updateQuantity(index, item.quantity - 1)}
+                  className="w-8 h-8 rounded-full items-center justify-center bg-green-200"
+                >
+                  <MaterialCommunityIcons
+                    name="minus"
+                    size={20}
+                    color="#4CAF50"
+                  />
+                </TouchableOpacity>
+                <Text className="mx-4 text-lg font-semibold text-green-800">
+                  {item.quantity}
+                </Text>
+                <TouchableOpacity
+                  onPress={() => updateQuantity(index, item.quantity + 1)}
+                  className="w-8 h-8 rounded-full items-center justify-center bg-green-200"
+                >
+                  <MaterialCommunityIcons
+                    name="plus"
+                    size={20}
+                    color="#4CAF50"
+                  />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => removeRecycleItem(index)}
+                  className="ml-4"
+                >
+                  <MaterialCommunityIcons
+                    name="trash-can-outline"
+                    size={24}
+                    color="#E57373"
+                  />
+                </TouchableOpacity>
+              </View>
             </View>
-            <View className="flex-row items-center">
-              <TouchableOpacity
-                onPress={() => updateQuantity(index, item.quantity - 1)}
-                className="bg-gray-300 w-8 h-8 rounded-full items-center justify-center"
-              >
-                <Text className="text-lg font-bold">-</Text>
-              </TouchableOpacity>
-              <Text className="mx-3 font-semibold">{item.quantity}</Text>
-              <TouchableOpacity
-                onPress={() => updateQuantity(index, item.quantity + 1)}
-                className="bg-gray-300 w-8 h-8 rounded-full items-center justify-center"
-              >
-                <Text className="text-lg font-bold">+</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => removeRecycleItem(index)}
-                className="ml-4"
-              >
-                <Text className="text-lg font-bold">x</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        ))}
+          ))}
+        </ScrollView>
 
         <TouchableOpacity
-          onPress={() => onSubmit()}
-          className="bg-blue-500 px-4 py-3 rounded-lg mt-4"
+          onPress={onSubmit}
+          className="bg-green-600 px-6 py-4 rounded-full shadow-md"
         >
-          <Text className="text-white font-semibold text-center">Submit</Text>
+          <Text className="text-white font-bold text-lg text-center">
+            Submit Recycling
+          </Text>
         </TouchableOpacity>
       </View>
     </Modal>

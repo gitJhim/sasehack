@@ -13,7 +13,14 @@ export type CycleItem = {
   quantity: number;
 };
 
-export type CycleItemType = "Bottle" | "Bag" | "Can";
+export type CycleItemType =
+  | "Plastic Bottle"
+  | "Cardboard Box"
+  | "Aluminum Can"
+  | "Glass Bottle"
+  | "Plastic Bag"
+  | "Soda Can"
+  | "Paper Cup";
 
 export type CycleStore = {
   cycles: Cycle[];
