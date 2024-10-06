@@ -1,34 +1,50 @@
+import { useState } from 'react';
 import { Text, View, Pressable } from "react-native";
 import TopBar from "../components/TopBar";
-import { useState } from "react";
 
 const Ranking = () => {
-  const catagories = ["City", "User", "Bin", "School"];
-  const [selectedCatagory, setSelectedCatagory] = useState("City");
-
+  const categories = ["City", "User", "Bin", "School"];
+  const [selectedCategory, setSelectedCategory] = useState("City");
 
   return (
-    <View>
+    <View className="flex-1 bg-gray-100">
       <TopBar />
-      <View className="flex-col items-center">
+      <View className="flex-1 items-center">
         <Text className="text-4xl font-bold p-4">Rankings</Text>
-        <View className="flex-row justify-evenly bg-[#a5e5bd] w-11/12 p-5 rounded-t-3xl">
-          {catagories.map((catagory) => (
+        <View className="flex-row w-11/12 mb-[-1px]">
+          {categories.map((category) => (
             <Pressable
-              key={catagory}
-              onPress={() => setSelectedCatagory(catagory)}
-              className={`${
-                selectedCatagory === catagory
-                  ? "bg-[#17A773]"
-                  : " text-black"
-              } rounded-lg py-2 px-4`}
+              key={category}
+              onPress={() => setSelectedCategory(category)}
+              className={`
+                flex-1 items-center justify-center py-2 px-1
+                ${selectedCategory === category
+                  ? 'bg-[#16A34A] rounded-t-lg z-10'
+                  : 'bg-[#a5e5bd] rounded-t-md'}
+              `}
+              style={{
+                borderTopLeftRadius: 8,
+                borderTopRightRadius: 8,
+                borderWidth: 1,
+                borderColor: selectedCategory === category ? '#16A34A' : '#a5e5bd',
+                borderBottomWidth: selectedCategory === category ? 0 : 1,
+                marginHorizontal: 0, 
+              }}
             >
-              <Text className="font-semibold text-lg">{catagory}</Text>
+              <Text
+                className={`text-center ${
+                  selectedCategory === category
+                    ? "text-white font-semibold"
+                    : "text-gray-700"
+                }`}
+              >
+                {category}
+              </Text>
             </Pressable>
           ))}
         </View>
-        <View className="bg-[#16A34A] flex-row justify-center items-center w-11/12 p-5 h-[420px] rounded-b-3xl">
-
+        <View className="bg-[#16A34A] w-11/12 p-5 h-[420px] rounded-b-3xl">
+          {/* Content for the selected category */}
         </View>
       </View>
     </View>
