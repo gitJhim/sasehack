@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { View, Button, Image, Text, StyleSheet, ActivityIndicator, ScrollView } from 'react-native';
 
-const COMPUTER_VISION_ENDPOINT = 'https://sasehack.cognitiveservices.azure.com/';
-const COMPUTER_VISION_KEY = 'fb76ef3efd004d1782def5e59029fc42';
+const COMPUTER_VISION_ENDPOINT = "https://sasehack.cognitiveservices.azure.com/";
+const COMPUTER_VISION_KEY = `${process.env.COMPUTER_VISION_KEY}`;
 
 // Replace this with a valid image URL of a recycling bin or recyclable items
-const TEST_IMAGE_URL = 'https://www.wastewiseproductsinc.com/wp-content/uploads/2014/04/ugly-blue-recycling-bin.jpg';
+const TEST_IMAGE_URL = 'https://c7.alamy.com/comp/H2YJGA/3d-business-people-illustration-businessman-hiding-in-a-trash-bin-H2YJGA.jpg';
 
 interface ImageAnalysisProps {
   onAnalysisComplete: (result: string, imageUri: string) => void;
