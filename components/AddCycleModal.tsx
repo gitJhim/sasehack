@@ -6,15 +6,18 @@ import { CycleItem } from "../types/cycle.types";
 import { useUserStore } from "../state/stores/userStore";
 import { addNewCycle } from "../utils/db/cycle";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import uuid from "react-native-uuid";
 
 export default function AddCycleModal({
   isVisible,
   setModalVisible,
+  markerId,
   cycleId,
 }: {
   isVisible: boolean;
   setModalVisible: (visible: boolean) => void;
-  cycleId: string;
+  markerId: string | null;
+  cycleId?: string;
 }) {
   const user = useUserStore((state) => state.user);
   if (!user) {
@@ -24,29 +27,52 @@ export default function AddCycleModal({
   const [value, setValue] = useState(null);
   const [items, setItems] = useState([
     {
-      label: "Plastic",
-      value: "plastic",
+      label: "Plastic Bottle",
+      value: "plastic bottle",
       icon: () => (
         <Image source={{ uri: "/api/placeholder/50/50" }} className="w-6 h-6" />
       ),
     },
     {
-      label: "Paper",
-      value: "paper",
+      label: "Cardboard Box",
+      value: "cardboard box",
+      icon: () => (
+        <Image source={{ uri: "/api/placeholder/50/50" }} className="w-6 h-6" />
+      ),
+    },
+
+    {
+      label: "Aluminum Can",
+      value: "aluminum can",
       icon: () => (
         <Image source={{ uri: "/api/placeholder/50/50" }} className="w-6 h-6" />
       ),
     },
     {
-      label: "Glass",
-      value: "glass",
+      label: "Glass Bottle",
+      value: "glass bottle",
       icon: () => (
         <Image source={{ uri: "/api/placeholder/50/50" }} className="w-6 h-6" />
       ),
     },
     {
-      label: "Metal",
-      value: "metal",
+      label: "Plastic Bag",
+      value: "plastic bag",
+      icon: () => (
+        <Image source={{ uri: "/api/placeholder/50/50" }} className="w-6 h-6" />
+      ),
+    },
+    {
+      label: "Soda Can",
+      value: "soda can",
+      icon: () => (
+        <Image source={{ uri: "/api/placeholder/50/50" }} className="w-6 h-6" />
+      ),
+    },
+
+    {
+      label: "Paper Cup",
+      value: "paper cup",
       icon: () => (
         <Image source={{ uri: "/api/placeholder/50/50" }} className="w-6 h-6" />
       ),
@@ -56,7 +82,7 @@ export default function AddCycleModal({
   const [recycleItems, setRecycleItems] = useState([] as CycleItem[]);
 
   const addRecycleItem = () => {
-    if (value) {
+    if (value && cycleId) {
       setRecycleItems([
         ...recycleItems,
         {
@@ -83,10 +109,13 @@ export default function AddCycleModal({
   };
 
   const onSubmit = async () => {
+    if (!cycleId) {
+      return;
+    }
     const newCycle = {
       id: cycleId,
       userId: user.id,
-      markerId: null,
+      markerId: markerId,
       items: recycleItems,
       created_at: null,
     };

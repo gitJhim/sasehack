@@ -17,6 +17,7 @@ import { getMarkers } from "../utils/db/map";
 import AddCycleModal from "./AddCycleModal";
 import AddBinModal from "./AddBinModal";
 import { Marker as MarkerType } from "../types/map.types";
+import uuid from "react-native-uuid";
 
 const CustomCallout = ({
   marker,
@@ -163,7 +164,8 @@ export default function Map() {
       <AddCycleModal
         isVisible={recycleModalVisible}
         setModalVisible={setRecycleModalVisible}
-        cycleId={"af51bef3-c370-4e57-b769-70794e848492"}
+        markerId={selectedMarker}
+        cycleId={uuid.v4().toString()}
       />
       <AddBinModal
         isVisible={addBinModalVisible}
