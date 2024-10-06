@@ -36,4 +36,4 @@ yarn-error.*
 
 .supermaven
 
-.env
+*.env

@@ -6,8 +6,6 @@ import { GOOGLE_MAPS_API_KEY } from '@env';
 import { useMapStore } from "../state/stores/mapStore";
 import { Marker } from "../types/map.types";
 
-Geocoder.init(`${GOOGLE_MAPS_API_KEY}`);
-
 type Location = {
   id: string;
   latitude: number;
@@ -18,6 +16,7 @@ type Location = {
 }
 
 const Ranking = () => {
+  Geocoder.init(`${GOOGLE_MAPS_API_KEY}`);
   const categories = ["City", "State", "User", "Bin"];
   const [selectedCategory, setSelectedCategory] = useState("City");
   const markers = useMapStore((state) => state.markers);
@@ -32,53 +31,51 @@ const Ranking = () => {
       const state = address.find((item) => item.types.includes("administrative_area_level_1"))?.long_name;
 
       if (city && state) {
-        setLocations(prevLocations => 
-          prevLocations.map(loc => 
-            loc.id === location.id 
-              ? { ...loc, address: `${city}, ${state}` } 
-              : loc
-          )
-        );
+        return {
+          id: location.id,
+          latitude: location.latitude,
+          longitude: location.longitude,
+          city,
+          state,
+          fullAddress: `${city}, ${state}`
+        };
       }
     } catch (error) {
       console.warn('Error fetching address:', error);
     }
+    return null;
   };
 
-  const filterTop5ByCategory = (category: string) => {
+  const filterTop5ByCategory = (category: string, locs: Location[]) => {
     let frequencyMap: Record<string, number> = {};
     
     switch (category) {
       case 'City':
-        frequencyMap = locations.reduce((acc, location) => {
+        frequencyMap = locs.reduce((acc, location) => {
           acc[location.city] = (acc[location.city] || 0) + 1;
           return acc;
         }, {} as Record<string, number>);
         break;
       case 'State':
-        frequencyMap = locations.reduce((acc, location) => {
+        frequencyMap = locs.reduce((acc, location) => {
           acc[location.state] = (acc[location.state] || 0) + 1;
           return acc;
         }, {} as Record<string, number>);
         break;
       case 'User':
-        // Assuming user information is stored in the location.id
-        frequencyMap = locations.reduce((acc, location) => {
+        frequencyMap = locs.reduce((acc, location) => {
           acc[location.id] = (acc[location.id] || 0) + 1;
           return acc;
         }, {} as Record<string, number>);
         break;
       case 'Bin':
-        // Assuming bin information is stored somewhere in the location object
-        // You may need to adjust this based on your actual data structure
-        frequencyMap = locations.reduce((acc, location) => {
-          const binId = location.id; // Replace with actual bin identifier
-          acc[binId] = (acc[binId] || 0) + 1;
+        frequencyMap = locs.reduce((acc, location) => {
+          acc[location.id] = (acc[location.id] || 0) + 1;
           return acc;
         }, {} as Record<string, number>);
         break;
       default:
-        frequencyMap = locations.reduce((acc, location) => {
+        frequencyMap = locs.reduce((acc, location) => {
           acc[location.fullAddress] = (acc[location.fullAddress] || 0) + 1;
           return acc;
         }, {} as Record<string, number>);
@@ -94,18 +91,20 @@ const Ranking = () => {
 
   useEffect(() => {
     const loadLocations = async () => {
-      setLocations([]); // Reset locations
-      await Promise.all(markers.map(marker => getLocation(marker)));
+      const newLocations = await Promise.all(
+        markers.map(marker => getLocation(marker))
+      );
+      const validLocations = newLocations.filter((loc): loc is Location => loc !== null);
+      setLocations(validLocations);
+      filterTop5ByCategory(selectedCategory, validLocations);
     };
 
     loadLocations();
   }, [markers]);
 
   useEffect(() => {
-    if (locations.length > 0) {
-      filterTop5ByCategory(selectedCategory);
-    }
-  }, [locations, selectedCategory]);
+    filterTop5ByCategory(selectedCategory, locations);
+  }, [selectedCategory, locations]);
 
   const onChangeCategory = (category: string) => {
     setSelectedCategory(category);
