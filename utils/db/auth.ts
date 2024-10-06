@@ -1,6 +1,7 @@
 import { Session } from "@supabase/supabase-js";
 import { supabase } from "../supabase";
 import { useUserStore } from "../../state/stores/userStore";
+import { Event } from "../../types/user.types";
 
 export const insertNewUser = async (session: Session) => {
   const { data, error } = await supabase
@@ -56,6 +57,17 @@ export const updateUser = async (session: Session) => {
     .select("*");
 
   return { user: data, error };
+};
+
+export const loadLogs = async (userId: string) => {
+  const { data, error } = await supabase
+    .from("logs")
+    .select("*")
+    .eq("user_id", userId);
+
+  useUserStore.getState().setLogs(data as Event[]);
+
+  return { data: data as Event[], error };
 };
 
 export const checkAndUpdateUser = async (session: Session | null) => {

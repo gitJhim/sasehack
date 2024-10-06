@@ -4,6 +4,10 @@ export type UserStore = {
   user: User | null;
   setUser: (user: User) => void;
 
+  logs: Event[];
+  setLogs: (logs: Event[]) => void;
+  addLog: (log: Event) => void;
+
   session: Session | null;
   setSession: (session: Session | null) => void;
 };
@@ -19,3 +23,16 @@ export type User = {
   level: number | null;
   xp: number | null;
 };
+
+export type Event = {
+  id: string | null;
+  user_id: string | null;
+  data_id: string | null;
+  type: LogEventType;
+  created_at: string | null;
+};
+
+export enum LogEventType {
+  NEW_CYCLE = "NEW_CYCLE",
+  NEW_MARKER = "NEW_MARKER",
+}
