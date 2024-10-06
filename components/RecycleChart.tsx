@@ -29,7 +29,7 @@ const RecycleChart = () => {
   };
 
   return (
-    <View className=" flex-1 items-center justify-center">
+    <View className=" flex-1 items-center justify-center mt-4">
       <ContributionGraph
         values={chartData()}
         endDate={new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000)}

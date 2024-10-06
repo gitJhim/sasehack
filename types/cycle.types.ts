@@ -1,5 +1,3 @@
-import { LogEvent } from "./user.types";
-
 export type Cycle = {
   id: string | null;
   userId: string | null;
@@ -14,6 +12,7 @@ export type CycleItem = {
   type: CycleItemType;
   quantity: number;
 };
+
 export type CycleItemType = "Bottle" | "Bag" | "Can";
 
 export type CycleStore = {
