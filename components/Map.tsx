@@ -13,7 +13,7 @@ import Modal from "react-native-modal";
 import { useMapStore } from "../state/stores/mapStore";
 import { useUserStore } from "../state/stores/userStore";
 import SignInModal from "./SignInModal";
-import { getMarkers } from "../utils/db/map";
+import { getMarkerPhoto, getMarkers } from "../utils/db/map";
 import AddCycleModal from "./AddCycleModal";
 import { router } from "expo-router";
 import { Marker as MarkerType } from "../types/map.types";
@@ -86,8 +86,34 @@ export default function Map() {
     setAddBinModalVisible(true);
   };
 
+  const InfoRow = ({ label, value }: { label: string; value: string }) => {
+    return (
+      <View className="flex-row justify-between items-center">
+        <Text className="text-sm font-semibold text-gray-600">{label}:</Text>
+        <Text className="text-sm font-bold text-gray-800">{value}</Text>
+      </View>
+    );
+  };
+
   const renderMarkers = () => {
     return markers.map((marker) => (
+      <BinMarker marker={marker} key={marker.id} />
+    ));
+  };
+
+  const BinMarker = ({ marker }: { marker: MarkerType }) => {
+    const [imageUri, setImageUri] = useState<string>("a");
+
+    useEffect(() => {
+      const loadImage = async () => {
+        if (!marker.id) return;
+        const image = await getMarkerPhoto(marker.id);
+        setImageUri(image);
+      };
+      loadImage();
+    }, []);
+
+    return (
       <Marker
         key={marker.id}
         coordinate={{
@@ -97,29 +123,34 @@ export default function Map() {
         image={require("../assets/marker.png")}
       >
         <Callout onPress={() => setRecycleModalVisible(true)}>
-          <View className="bg-white rounded-xl p-4 w-64 justify-center">
-            <Text className="text-xl font-bold mb-2 text-center">Bin</Text>
-            <Text className="text-md font-bold mb-2 text-left">
-              Estimated Capacity:{" "}
+          <View className="bg-white rounded-2xl overflow-hidden shadow-lg w-72">
+            <Text className="">
+              <Image
+                style={{ height: 400, width: 400 }}
+                source={{ uri: imageUri }}
+                resizeMode="repeat"
+              />
             </Text>
-            <Text className="text-md font-bold mb-2 text-left">
-              No. items recycles:{" "}
-            </Text>
-            <Text className="text-md font-bold mb-2 text-left">
-              Estimated weight recycled:{" "}
-            </Text>
-            <Text className="text-md font-bold mb-2 text-left">
-              No. people recycled:{" "}
-            </Text>
-            <TouchableOpacity className="bg-[#17A773] py-2 px-4 rounded-xl">
-              <Text className="text-white font-semibold text-center">
-                Recycle Now
+            <View className="p-4">
+              <Text className="text-2xl font-bold mb-3 text-center text-green-700">
+                Recycling Bin
               </Text>
-            </TouchableOpacity>
+              <View className="space-y-2">
+                <InfoRow label="Estimated Capacity" value={"100"} />
+                <InfoRow label="Items Recycled" value={"100"} />
+                <InfoRow label="Est. Weight Recycled" value={"100"} />
+                <InfoRow label="People Recycled" value={"100"} />
+              </View>
+              <TouchableOpacity className="bg-green-600 py-3 px-4 rounded-xl mt-4 shadow-md">
+                <Text className="text-white font-bold text-center text-lg">
+                  Recycle Now
+                </Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </Callout>
       </Marker>
-    ));
+    );
   };
 
   return (
@@ -160,8 +191,6 @@ export default function Map() {
           goToCurrentLocation();
         }}
       >
-        {myLocation && (
-        <Marker coordinate={{ latitude: myLocation.latitude, longitude: myLocation.longitude }} title="My Location" />)}
         {renderMarkers()}
       </MapView>
       <TouchableOpacity
