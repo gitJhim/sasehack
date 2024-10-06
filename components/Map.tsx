@@ -45,15 +45,15 @@ export default function Map() {
   const setMarkers = useMapStore((state) => state.setMarkers);
   const user = useUserStore((state) => state.user);
   const initialLocation = {
-    latitude: 37.78825,
-    longitude: -122.4324,
+    latitude: 39.75,
+    longitude: -84.19,
   };
   const [myLocation, setMyLocation] = useState(initialLocation);
   const [region, setRegion] = useState({
     latitude: initialLocation.latitude,
     longitude: initialLocation.longitude,
-    latitudeDelta: 0.0922,
-    longitudeDelta: 0.0421,
+    latitudeDelta: 0.3922,
+    longitudeDelta: 0.3421,
   });
   const mapRef = useRef<MapView>(null);
   const [modalVisible, setModalVisible] = useState(false);
@@ -188,6 +188,7 @@ export default function Map() {
         onRegionChangeComplete={setRegion}
         ref={mapRef}
         provider={PROVIDER_GOOGLE}
+        onMapReady={goToCurrentLocation}
       >
         <Marker coordinate={myLocation} title="My Location" />
         {renderMarkers()}
