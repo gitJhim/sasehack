@@ -37,12 +37,18 @@
       }
     },
     "plugins": [
+      "expo-image-picker",
+      {
+          "photosPermission": "The app accesses your photos to analyze recycling bins."
+      },
       "expo-router",
       [
+        
         "@react-native-google-signin/google-signin",
         {
           "iosUrlScheme": "com.googleusercontent.apps.156165157980-mr98u2molp7k41g51rsanfncuja8no5l"
         }
+        
       ]
     ]
   }
