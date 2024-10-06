@@ -34,6 +34,7 @@ export default function AppLayout() {
       <ErrorBoundary>
         <Stack>
           <Stack.Screen name="index" options={{ headerShown: false }} />
+          <Stack.Screen name="profile" options={{ headerShown: false }} />
         </Stack>
       </ErrorBoundary>
     </>
