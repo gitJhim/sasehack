@@ -1,7 +1,8 @@
 import { Session } from "@supabase/supabase-js";
 import { supabase } from "../supabase";
 import { useUserStore } from "../../state/stores/userStore";
-import { Event } from "../../types/user.types";
+import { Event, User } from "../../types/user.types";
+import XpToLevel from "../../components/XpToLevel";
 
 export const insertNewUser = async (session: Session) => {
   const { data, error } = await supabase
@@ -124,4 +125,37 @@ export const checkAndUpdateUser = async (session: Session | null) => {
   } catch (error: any) {
     console.error("Unexpected error:", error);
   }
+};
+
+export const addXP = async (user: User, xp: number) => {
+  const { level, xp: currentXp } = user;
+  if (currentXp === null || level === null) {
+    return;
+  }
+  let newLevel = level;
+  let newXp = currentXp + xp;
+
+  if (newXp >= XpToLevel(user)) {
+    newLevel = level + 1;
+    newXp = newXp - XpToLevel(user);
+  }
+
+  console.log("New level:", newLevel);
+  console.log("New xp:", newXp);
+
+  const { data, error } = await supabase
+    .from("users")
+    .update({
+      level: newLevel,
+      xp: newXp,
+    })
+    .eq("id", user.id)
+    .select("*");
+
+  if (error) {
+    console.error("Error updating user:", error.message);
+    return;
+  }
+
+  return { data, error };
 };

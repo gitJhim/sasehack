@@ -6,7 +6,8 @@ import { CycleItem } from "../types/cycle.types";
 import { useUserStore } from "../state/stores/userStore";
 import { addNewCycle } from "../utils/db/cycle";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import uuid from "react-native-uuid";
+import { addXP } from "../utils/db/auth";
+import { calculateXp } from "../components/XpToLevel";
 
 export default function AddCycleModal({
   isVisible,
@@ -121,6 +122,7 @@ export default function AddCycleModal({
     };
 
     await addNewCycle(newCycle);
+    await addXP(user, calculateXp(newCycle.items));
     setModalVisible(false);
   };
 

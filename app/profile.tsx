@@ -4,7 +4,7 @@ import RecycleChart from "../components/RecycleChart";
 import XpBar from "../components/XpBar";
 import ActivityLog from "../components/ActivityLog";
 import { useEffect, useState } from "react";
-import { loadLogs } from "../utils/db/auth";
+import { checkAndUpdateUser, loadLogs } from "../utils/db/auth";
 import { loadUserCycles } from "../utils/db/cycle";
 import { Cycle } from "../types/cycle.types";
 import { Marker } from "../types/map.types";
@@ -12,6 +12,7 @@ import { loadUserMarkers } from "../utils/db/map";
 
 const Profile = () => {
   const user = useUserStore((state) => state.user);
+  const session = useUserStore((state) => state.session);
 
   const [cycles, setCycles] = useState<Cycle[]>([]);
   const [markers, setMarkers] = useState<Marker[]>([]);
@@ -26,6 +27,11 @@ const Profile = () => {
     };
 
     loadData();
+
+    if (session) {
+      console.log("Checking and updating user...");
+      checkAndUpdateUser(session);
+    }
   }, []);
 
   return (

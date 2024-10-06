@@ -10,7 +10,7 @@ const RecycleChart = ({ cycles }: { cycles: Cycle[] }) => {
     backgroundGradientToOpacity: 0,
     color: (opacity = 1) => `rgba(47, 152, 74, ${opacity})`,
     labelColor: () => "#000000",
-    strokeWidth: 3, // optional, default 3
+    strokeWidth: 3,
   };
 
   const screenWidth = Dimensions.get("screen").width;
@@ -37,6 +37,7 @@ const RecycleChart = ({ cycles }: { cycles: Cycle[] }) => {
         count,
       });
     }
+    console.log(data);
     return data;
   };
 
