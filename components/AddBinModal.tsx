@@ -64,17 +64,17 @@ export default function AddBinModal({
           ))}
         </View>
         <View className="flex flex-row justify-evenly items-center">
+        <TouchableOpacity
+            onPress={() => setModalVisible(false)}
+            className="bg-gray-300 py-4 px-8 rounded-full"
+          >
+            <Text className="text-white font-semibold text-xl">Close</Text>
+          </TouchableOpacity>
           <TouchableOpacity
             onPress={onSubmit}
             className="bg-[#17A773] py-4 px-8 rounded-full"
           >
             <Text className="text-white font-semibold text-xl">Create</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => setModalVisible(false)}
-            className="bg-gray-300 py-4 px-8 rounded-full"
-          >
-            <Text className="text-white font-semibold text-xl">Close</Text>
           </TouchableOpacity>
         </View>
       </View>
