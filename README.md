@@ -48,4 +48,4 @@ Eco Vision makes recycling fun, engaging, and rewarding for adolescents. Togethe
 - Reduce waste
 - Build a more sustainable future—one recycled item at a time
 
-Join the movement today. Download Eco Vision, track your recycling, and make a difference. Together, we recycle. Together, we build a better future.
+Join the movement today. Track your recycling, and make a difference. Together, we recycle. Together, we build a better future.
