@@ -3,6 +3,7 @@ import { supabase } from "../supabase";
 import { useUserStore } from "../../state/stores/userStore";
 import { Event, User } from "../../types/user.types";
 import XpToLevel from "../../components/XpToLevel";
+import { Use } from "react-native-svg";
 
 export const insertNewUser = async (session: Session) => {
   const { data, error } = await supabase
@@ -158,4 +159,9 @@ export const addXP = async (user: User, xp: number) => {
   }
 
   return { data, error };
+};
+
+export const getUsers = async () => {
+  const { data, error } = await supabase.from("users").select("*");
+  return { data: data as User[], error };
 };
