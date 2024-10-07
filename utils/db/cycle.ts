@@ -17,6 +17,11 @@ export const addNewCycle = async (cycle: Cycle) => {
     .select("*")
     .single();
 
+  if (error) {
+    console.error("Error adding cycle:", error.message);
+    return { data: null, error };
+  }
+
   for (const cycleItem of cycle.items) {
     const { data: itemData, error } = await supabase
       .from("cycle_items")
