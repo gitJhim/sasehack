@@ -21,7 +21,7 @@ export const Navigator = () => {
 
   useEffect(() => {
     // whitelist paths
-    if (pathName == "") {
+    if (pathName == "/levelup") {
       isVisible(false);
     } else {
       isVisible(true);
