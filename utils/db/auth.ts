@@ -4,6 +4,7 @@ import { useUserStore } from "../../state/stores/userStore";
 import { Event, User } from "../../types/user.types";
 import XpToLevel from "../../components/XpToLevel";
 import { Use } from "react-native-svg";
+import { useRouter } from "expo-router";
 
 export const insertNewUser = async (session: Session) => {
   const { data, error } = await supabase
@@ -129,6 +130,7 @@ export const checkAndUpdateUser = async (session: Session | null) => {
 };
 
 export const addXP = async (user: User, xp: number) => {
+  const router = useRouter();
   const { level, xp: currentXp } = user;
   if (currentXp === null || level === null) {
     return;
@@ -139,6 +141,7 @@ export const addXP = async (user: User, xp: number) => {
   if (newXp >= XpToLevel(user)) {
     newLevel = level + 1;
     newXp = newXp - XpToLevel(user);
+    router.push("/levelup");
   }
 
   console.log("New level:", newLevel);

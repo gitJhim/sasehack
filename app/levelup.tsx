@@ -1,8 +1,10 @@
-import React, { useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, Animated, Easing } from 'react-native';
 import { useUserStore } from '../state/stores/userStore';
+import { useRouter } from 'expo-router';
 
 const LevelUpScreen = () => {
+  const router = useRouter();
   const user = useUserStore((state) => state.user);
   const scaleAnim = useRef(new Animated.Value(0)).current;
   const rotateAnim = useRef(new Animated.Value(0)).current;
@@ -28,6 +30,7 @@ const LevelUpScreen = () => {
         useNativeDriver: true,
       }),
     ]).start();
+    router.back();
   }, []);
 
   const spin = rotateAnim.interpolate({
