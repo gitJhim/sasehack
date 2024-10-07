@@ -130,7 +130,6 @@ export const checkAndUpdateUser = async (session: Session | null) => {
 };
 
 export const addXP = async (user: User, xp: number) => {
-  const router = useRouter();
   const { level, xp: currentXp } = user;
   if (currentXp === null || level === null) {
     return;
@@ -138,10 +137,11 @@ export const addXP = async (user: User, xp: number) => {
   let newLevel = level;
   let newXp = currentXp + xp;
 
+  let leveledUp = false;
   if (newXp >= XpToLevel(user)) {
     newLevel = level + 1;
     newXp = newXp - XpToLevel(user);
-    router.push("/levelup");
+    leveledUp = true;
   }
 
   console.log("New level:", newLevel);
@@ -161,7 +161,7 @@ export const addXP = async (user: User, xp: number) => {
     return;
   }
 
-  return { data, error };
+  return { data, error, leveledUp };
 };
 
 export const getUsers = async () => {

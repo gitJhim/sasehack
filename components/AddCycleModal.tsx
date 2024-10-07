@@ -8,6 +8,7 @@ import { addNewCycle } from "../utils/db/cycle";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { addXP } from "../utils/db/auth";
 import { calculateXp } from "../components/XpToLevel";
+import { useRouter } from "expo-router";
 
 export default function AddCycleModal({
   isVisible,
@@ -24,6 +25,7 @@ export default function AddCycleModal({
   if (!user) {
     return null;
   }
+  const router = useRouter();
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(null);
   const [items, setItems] = useState([
@@ -122,7 +124,11 @@ export default function AddCycleModal({
     };
 
     await addNewCycle(newCycle);
-    await addXP(user, calculateXp(newCycle.items));
+    const { leveledUp } = await addXP(user, calculateXp(newCycle.items));
+
+    if (leveledUp) {
+      router.push("/levelup");
+    }
     setModalVisible(false);
   };
 

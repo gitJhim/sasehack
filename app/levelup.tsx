@@ -1,7 +1,15 @@
-import React, { useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, Animated, Easing, ImageBackground, Image } from 'react-native';
-import { useUserStore } from '../state/stores/userStore';
-import { useRouter } from 'expo-router';
+import React, { useEffect, useRef } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Animated,
+  Easing,
+  ImageBackground,
+  Image,
+} from "react-native";
+import { useUserStore } from "../state/stores/userStore";
+import { useRouter } from "expo-router";
 
 const LevelUpScreen = () => {
   const router = useRouter();
@@ -37,17 +45,17 @@ const LevelUpScreen = () => {
 
   const spin = rotateAnim.interpolate({
     inputRange: [0, 1],
-    outputRange: ['0deg', '360deg'],
+    outputRange: ["0deg", "360deg"],
   });
 
   return (
-    <ImageBackground 
+    <ImageBackground
       style={styles.container}
-      source={require("../assets/bg.png")}
+      source={require("../assets/levelupbg.png")}
     >
       <View style={styles.contentContainer}>
         <Animated.Image
-          source={require('../assets/levelup.png')}
+          source={require("../assets/levelup.png")}
           style={[
             styles.levelUpImage,
             {
@@ -63,17 +71,17 @@ const LevelUpScreen = () => {
           Level {level}
         </Animated.Text>
         <View className="flex-row p-2 h-12 w-40 rounded-full items-center bg-[#B1ECC8]">
-            <Image
-              source={require("../assets/kid_star.png")}
-              alt="star"
-              width={20}
-              height={20}
-            />
-            <Text className="font-bold items-center text-lg">
-              {" "}
-              Level: {level}
-            </Text>
-          </View>
+          <Image
+            source={require("../assets/kid_star.png")}
+            alt="star"
+            width={20}
+            height={20}
+          />
+          <Text className="font-bold items-center text-lg">
+            {" "}
+            Level: {level}
+          </Text>
+        </View>
       </View>
     </ImageBackground>
   );
@@ -82,12 +90,12 @@ const LevelUpScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 50, 0, 0.8)', // Dark green background
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 50, 0, 0.8)", // Dark green background
   },
   contentContainer: {
-    alignItems: 'center',
+    alignItems: "center",
   },
   levelUpImage: {
     width: 150,
@@ -96,18 +104,19 @@ const styles = StyleSheet.create({
   },
   levelUpText: {
     fontSize: 36,
-    fontWeight: 'bold',
-    color: '#FFFFFF', // White text
-    textShadowColor: 'rgba(0, 0, 0, 0.75)',
+    fontWeight: "bold",
+    color: "#FFFFFF", // White text
+    textShadowColor: "rgba(0, 0, 0, 0.75)",
     textShadowOffset: { width: -1, height: 1 },
     textShadowRadius: 10,
   },
   levelText: {
     fontSize: 24,
-    fontWeight: 'bold',
-    color: '#E8F5E9', // Very light green text
+    fontWeight: "bold",
+    color: "#E8F5E9", // Very light green text
     marginTop: 10,
   },
 });
 
 export default LevelUpScreen;
+
