@@ -143,11 +143,11 @@ export default function Map() {
                 <InfoRow label="Items Recycled" value={"100"} />
                 <InfoRow label="Est. Weight Recycled" value={"100"} />
               </View>
-              <TouchableOpacity className="bg-green-600 py-3 px-4 rounded-xl mt-4 shadow-md">
+              <View className="bg-green-600 py-3 px-4 rounded-xl mt-4 shadow-md">
                 <Text className="text-white font-bold text-center text-lg">
                   Recycle Now
                 </Text>
-              </TouchableOpacity>
+              </View>
             </View>
           </View>
         </Callout>
