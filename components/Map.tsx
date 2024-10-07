@@ -40,7 +40,7 @@ export default function Map() {
   const [signInModalVisible, setSignInModalVisible] = useState(false);
   const [recycleModalVisible, setRecycleModalVisible] = useState(false);
   const [addBinModalVisible, setAddBinModalVisible] = useState(false);
-  const [selectedMarker, setSelectedMarker] = useState<MarkerType>();
+  const [selectedMarker, setSelectedMarker] = useState<MarkerType | null>(null);
   const getCurrentLocation = async () => {
     let { status } = await Location.requestForegroundPermissionsAsync();
 
@@ -124,6 +124,7 @@ export default function Map() {
         }}
         image={require("../assets/marker.png")}
         onPress={() => setSelectedMarker(marker)}
+        onDeselect={() => setSelectedMarker(null)}
       >
         <Callout onPress={() => setRecycleModalVisible(true)}>
           <View className="bg-white rounded-2xl overflow-hidden shadow-lg w-72">
