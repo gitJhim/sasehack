@@ -1,5 +1,5 @@
-import { useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, Animated, Easing } from 'react-native';
+import React, { useEffect, useRef } from 'react';
+import { View, Text, StyleSheet, Animated, Easing, ImageBackground, Image } from 'react-native';
 import { useUserStore } from '../state/stores/userStore';
 import { useRouter } from 'expo-router';
 
@@ -10,6 +10,7 @@ const LevelUpScreen = () => {
   const rotateAnim = useRef(new Animated.Value(0)).current;
   const opacityAnim = useRef(new Animated.Value(0)).current;
   const level = user?.level;
+
   useEffect(() => {
     Animated.parallel([
       Animated.timing(scaleAnim, {
@@ -29,8 +30,9 @@ const LevelUpScreen = () => {
         duration: 500,
         useNativeDriver: true,
       }),
-    ]).start();
-    router.back();
+    ]).start(() => {
+      setTimeout(() => router.back(), 2000);
+    });
   }, []);
 
   const spin = rotateAnim.interpolate({
@@ -39,22 +41,41 @@ const LevelUpScreen = () => {
   });
 
   return (
-    <View style={styles.container}>
-      <Animated.View
-        style={[
-          styles.levelUpContainer,
-          {
-            opacity: opacityAnim,
-            transform: [{ scale: scaleAnim }, { rotate: spin }],
-          },
-        ]}
-      >
-        <Text style={styles.levelUpText}>Level Up!</Text>
+    <ImageBackground 
+      style={styles.container}
+      source={require("../assets/bg.png")}
+    >
+      <View style={styles.contentContainer}>
+        <Animated.Image
+          source={require('../assets/levelup.png')}
+          style={[
+            styles.levelUpImage,
+            {
+              opacity: opacityAnim,
+              transform: [{ scale: scaleAnim }, { rotate: spin }],
+            },
+          ]}
+        />
+        <Animated.Text style={[styles.levelUpText, { opacity: opacityAnim }]}>
+          Level Up!
+        </Animated.Text>
         <Animated.Text style={[styles.levelText, { opacity: opacityAnim }]}>
           Level {level}
         </Animated.Text>
-      </Animated.View>
-    </View>
+        <View className="flex-row p-2 h-12 w-40 rounded-full items-center bg-[#B1ECC8]">
+            <Image
+              source={require("../assets/kid_star.png")}
+              alt="star"
+              width={20}
+              height={20}
+            />
+            <Text className="font-bold items-center text-lg">
+              {" "}
+              Level: {level}
+            </Text>
+          </View>
+      </View>
+    </ImageBackground>
   );
 };
 
@@ -65,13 +86,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: 'rgba(0, 50, 0, 0.8)', // Dark green background
   },
-  levelUpContainer: {
-    backgroundColor: '#4CAF50', // Bright green background
-    borderRadius: 20,
-    padding: 20,
+  contentContainer: {
     alignItems: 'center',
-    borderWidth: 3,
-    borderColor: '#8BC34A', // Light green border
+  },
+  levelUpImage: {
+    width: 150,
+    height: 150,
+    marginBottom: 20,
   },
   levelUpText: {
     fontSize: 36,
