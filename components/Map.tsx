@@ -35,7 +35,6 @@ export default function Map() {
     longitudeDelta: 0.3421,
   });
   const mapRef = useRef<MapView>(null);
-  const [modalVisible, setModalVisible] = useState(false);
   const [signInModalVisible, setSignInModalVisible] = useState(false);
   const [recycleModalVisible, setRecycleModalVisible] = useState(false);
   const [addBinModalVisible, setAddBinModalVisible] = useState(false);
@@ -143,7 +142,6 @@ export default function Map() {
                 <InfoRow label="Estimated Capacity" value={"100"} />
                 <InfoRow label="Items Recycled" value={"100"} />
                 <InfoRow label="Est. Weight Recycled" value={"100"} />
-                <InfoRow label="People Recycled" value={"100"} />
               </View>
               <TouchableOpacity className="bg-green-600 py-3 px-4 rounded-xl mt-4 shadow-md">
                 <Text className="text-white font-bold text-center text-lg">
