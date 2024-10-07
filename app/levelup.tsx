@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, Animated, Easing, ImageBackground, Image } from 'react-native';
+import { View, Text, StyleSheet, Animated, Easing, ImageBackground } from 'react-native';
 import { useUserStore } from '../state/stores/userStore';
 import { useRouter } from 'expo-router';
 
@@ -31,7 +31,7 @@ const LevelUpScreen = () => {
         useNativeDriver: true,
       }),
     ]).start(() => {
-      setTimeout(() => router.back(), 2000);
+      setTimeout(() => router.back(), 3000);
     });
   }, []);
 
@@ -46,34 +46,24 @@ const LevelUpScreen = () => {
       source={require("../assets/bg.png")}
     >
       <View style={styles.contentContainer}>
-        <Animated.Image
-          source={require('../assets/levelup.png')}
+        <Animated.View
           style={[
-            styles.levelUpImage,
+            styles.animatedContainer,
             {
               opacity: opacityAnim,
               transform: [{ scale: scaleAnim }, { rotate: spin }],
             },
           ]}
-        />
+        >
+          <Animated.Image
+            source={require('../assets/level-up-badge.png')}
+            style={styles.levelUpImage}
+          />
+          <Text style={styles.spinningText}>Level {level}</Text>
+        </Animated.View>
         <Animated.Text style={[styles.levelUpText, { opacity: opacityAnim }]}>
           Level Up!
         </Animated.Text>
-        <Animated.Text style={[styles.levelText, { opacity: opacityAnim }]}>
-          Level {level}
-        </Animated.Text>
-        <View className="flex-row p-2 h-12 w-40 rounded-full items-center bg-[#B1ECC8]">
-            <Image
-              source={require("../assets/kid_star.png")}
-              alt="star"
-              width={20}
-              height={20}
-            />
-            <Text className="font-bold items-center text-lg">
-              {" "}
-              Level: {level}
-            </Text>
-          </View>
       </View>
     </ImageBackground>
   );
@@ -89,10 +79,23 @@ const styles = StyleSheet.create({
   contentContainer: {
     alignItems: 'center',
   },
+  animatedContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 20,
+  },
   levelUpImage: {
     width: 150,
     height: 150,
-    marginBottom: 20,
+  },
+  spinningText: {
+    position: 'absolute',
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#FFFFFF',
+    textShadowColor: 'rgba(0, 0, 0, 0.75)',
+    textShadowOffset: { width: -1, height: 1 },
+    textShadowRadius: 10,
   },
   levelUpText: {
     fontSize: 36,
@@ -101,12 +104,6 @@ const styles = StyleSheet.create({
     textShadowColor: 'rgba(0, 0, 0, 0.75)',
     textShadowOffset: { width: -1, height: 1 },
     textShadowRadius: 10,
-  },
-  levelText: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#E8F5E9', // Very light green text
-    marginTop: 10,
   },
 });
 
