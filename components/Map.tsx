@@ -9,15 +9,16 @@ import {
   Image,
 } from "react-native";
 import * as Location from "expo-location";
-import Modal from "react-native-modal";
 import { useMapStore } from "../state/stores/mapStore";
 import { useUserStore } from "../state/stores/userStore";
 import SignInModal from "./SignInModal";
 import { getMarkerPhoto, getMarkers } from "../utils/db/map";
 import AddCycleModal from "./AddCycleModal";
-import { router } from "expo-router";
 import { Marker as MarkerType } from "../types/map.types";
 import uuid from "react-native-uuid";
+import { analyzeImage } from "../utils/ai/analysis";
+import Modal from "react-native-modal";
+import AddBinModal from "./AddBinModal";
 
 export default function Map() {
   const markers = useMapStore((state) => state.markers);
@@ -27,7 +28,8 @@ export default function Map() {
     latitude: 39.75,
     longitude: -84.19,
   };
-  const [myLocation, setMyLocation] = useState<Location.LocationObjectCoords | null>(null);
+  const [myLocation, setMyLocation] =
+    useState<Location.LocationObjectCoords | null>(null);
   const [region, setRegion] = useState({
     latitude: initialLocation.latitude,
     longitude: initialLocation.longitude,
@@ -35,7 +37,6 @@ export default function Map() {
     longitudeDelta: 0.0421,
   });
   const mapRef = useRef<MapView>(null);
-  const [modalVisible, setModalVisible] = useState(false);
   const [signInModalVisible, setSignInModalVisible] = useState(false);
   const [recycleModalVisible, setRecycleModalVisible] = useState(false);
   const [addBinModalVisible, setAddBinModalVisible] = useState(false);
@@ -111,6 +112,7 @@ export default function Map() {
         setImageUri(image);
       };
       loadImage();
+      analyzeImage(imageUri);
     }, []);
 
     return (
@@ -141,20 +143,18 @@ export default function Map() {
                 <InfoRow label="Estimated Capacity" value={"100"} />
                 <InfoRow label="Items Recycled" value={"100"} />
                 <InfoRow label="Est. Weight Recycled" value={"100"} />
-                <InfoRow label="People Recycled" value={"100"} />
               </View>
-              <TouchableOpacity className="bg-green-600 py-3 px-4 rounded-xl mt-4 shadow-md">
+              <View className="bg-green-600 py-3 px-4 rounded-xl mt-4 shadow-md">
                 <Text className="text-white font-bold text-center text-lg">
                   Recycle Now
                 </Text>
-              </TouchableOpacity>
+              </View>
             </View>
           </View>
         </Callout>
       </Marker>
     );
   };
-
   return (
     <View className="flex flex-col justify-center items-center">
       <SignInModal
@@ -164,24 +164,15 @@ export default function Map() {
       <AddCycleModal
         isVisible={recycleModalVisible}
         setModalVisible={setRecycleModalVisible}
-        markerId={selectedMarker?.id || uuid.v4().toString()}
+        markerId={selectedMarker?.id || ""}
         cycleId={uuid.v4().toString()}
       />
-      <Modal
-        isVisible={modalVisible}
-        onBackdropPress={() => setModalVisible(false)}
-      >
-        <View className="p-4 justify-center items-center">
-          <View className="flex-col justify-stretch items-center bg-white rounded-3xl w-6/12 py-8 px-4">
-            <TouchableOpacity
-              onPress={onAddMarker}
-              className="bg-[#17A773] py-2 px-4 rounded-[15] mb-5"
-            >
-              <Text className="text-white font-semibold">Add Bin</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
+      <AddBinModal
+        longitude={myLocation?.longitude || 0}
+        latitude={myLocation?.latitude || 0}
+        isVisible={addBinModalVisible}
+        setModalVisible={setAddBinModalVisible}
+      />
       <MapView
         style={styles.map}
         region={region}
