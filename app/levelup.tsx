@@ -39,7 +39,7 @@ const LevelUpScreen = () => {
         useNativeDriver: true,
       }),
     ]).start(() => {
-      setTimeout(() => router.back(), 2000);
+      setTimeout(() => router.back(), 3000);
     });
   }, []);
 
@@ -57,13 +57,19 @@ const LevelUpScreen = () => {
         <Animated.Image
           source={require("../assets/levelup.png")}
           style={[
-            styles.levelUpImage,
+            styles.animatedContainer,
             {
               opacity: opacityAnim,
               transform: [{ scale: scaleAnim }, { rotate: spin }],
             },
           ]}
-        />
+        >
+          <Animated.Image
+            source={require('../assets/level-up-badge.png')}
+            style={styles.levelUpImage}
+          />
+          <Text style={styles.spinningText}>Level {level}</Text>
+        </Animated.View>
         <Animated.Text style={[styles.levelUpText, { opacity: opacityAnim }]}>
           Level Up!
         </Animated.Text>
@@ -97,10 +103,23 @@ const styles = StyleSheet.create({
   contentContainer: {
     alignItems: "center",
   },
+  animatedContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 20,
+  },
   levelUpImage: {
     width: 150,
     height: 150,
-    marginBottom: 20,
+  },
+  spinningText: {
+    position: 'absolute',
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#FFFFFF',
+    textShadowColor: 'rgba(0, 0, 0, 0.75)',
+    textShadowOffset: { width: -1, height: 1 },
+    textShadowRadius: 10,
   },
   levelUpText: {
     fontSize: 36,

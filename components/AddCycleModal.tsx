@@ -32,53 +32,31 @@ export default function AddCycleModal({
     {
       label: "Plastic Bottle",
       value: "plastic bottle",
-      icon: () => (
-        <Image source={{ uri: "/api/placeholder/50/50" }} className="w-6 h-6" />
-      ),
     },
     {
       label: "Cardboard Box",
       value: "cardboard box",
-      icon: () => (
-        <Image source={{ uri: "/api/placeholder/50/50" }} className="w-6 h-6" />
-      ),
     },
-
     {
       label: "Aluminum Can",
       value: "aluminum can",
-      icon: () => (
-        <Image source={{ uri: "/api/placeholder/50/50" }} className="w-6 h-6" />
-      ),
     },
     {
       label: "Glass Bottle",
       value: "glass bottle",
-      icon: () => (
-        <Image source={{ uri: "/api/placeholder/50/50" }} className="w-6 h-6" />
-      ),
     },
     {
       label: "Plastic Bag",
       value: "plastic bag",
-      icon: () => (
-        <Image source={{ uri: "/api/placeholder/50/50" }} className="w-6 h-6" />
-      ),
     },
     {
       label: "Soda Can",
       value: "soda can",
-      icon: () => (
-        <Image source={{ uri: "/api/placeholder/50/50" }} className="w-6 h-6" />
-      ),
     },
 
     {
       label: "Paper Cup",
       value: "paper cup",
-      icon: () => (
-        <Image source={{ uri: "/api/placeholder/50/50" }} className="w-6 h-6" />
-      ),
     },
   ]);
 

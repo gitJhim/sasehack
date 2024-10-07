@@ -35,5 +35,4 @@ yarn-error.*
 *.tsbuildinfo
 
 .supermaven
-
-*.env
+.env
