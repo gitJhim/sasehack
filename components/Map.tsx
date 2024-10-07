@@ -9,7 +9,6 @@ import {
   Image,
 } from "react-native";
 import * as Location from "expo-location";
-import Modal from "react-native-modal";
 import { useMapStore } from "../state/stores/mapStore";
 import { useUserStore } from "../state/stores/userStore";
 import SignInModal from "./SignInModal";
@@ -18,6 +17,7 @@ import AddCycleModal from "./AddCycleModal";
 import { router } from "expo-router";
 import { Marker as MarkerType } from "../types/map.types";
 import uuid from "react-native-uuid";
+import { analyzeImage } from "../utils/ai/analysis";
 
 export default function Map() {
   const markers = useMapStore((state) => state.markers);
@@ -35,7 +35,6 @@ export default function Map() {
     longitudeDelta: 0.0421,
   });
   const mapRef = useRef<MapView>(null);
-  const [modalVisible, setModalVisible] = useState(false);
   const [signInModalVisible, setSignInModalVisible] = useState(false);
   const [recycleModalVisible, setRecycleModalVisible] = useState(false);
   const [addBinModalVisible, setAddBinModalVisible] = useState(false);
@@ -111,6 +110,7 @@ export default function Map() {
         setImageUri(image);
       };
       loadImage();
+      analyzeImage(imageUri);
     }, []);
 
     return (
@@ -139,13 +139,12 @@ export default function Map() {
                 <InfoRow label="Estimated Capacity" value={"100"} />
                 <InfoRow label="Items Recycled" value={"100"} />
                 <InfoRow label="Est. Weight Recycled" value={"100"} />
-                <InfoRow label="People Recycled" value={"100"} />
               </View>
-              <TouchableOpacity className="bg-green-600 py-3 px-4 rounded-xl mt-4 shadow-md">
+              <View className="bg-green-600 py-3 px-4 rounded-xl mt-4 shadow-md">
                 <Text className="text-white font-bold text-center text-lg">
                   Recycle Now
                 </Text>
-              </TouchableOpacity>
+              </View>
             </View>
           </View>
         </Callout>
